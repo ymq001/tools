@@ -17,7 +17,7 @@ yarn doc
 `````
 
 ## 生成文件说明
-src 目录下 每个子目录会生成一个打包文件 **如：utils 回生成 utils.js**
+src 目录下 每个子目录会生成一个打包文件 **如：utils 会生成 utils.js**
 webpack 会自动查找src子目录下的 **index.js**文件 作为入口文件使用
 
 
