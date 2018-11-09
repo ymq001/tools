@@ -12,4 +12,4 @@
 
 ### map相关配置说明
 
--- [各省市区中心坐标 文档](../../tutorials/bmap_city.center.md)
+-- [各省市区中心坐标 文档](../../tutorials/bmap_city.center.txt)
