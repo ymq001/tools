@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>utils/tools.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="utils.html">utils</a><ul class='methods'><li data-type='method'><a href="utils.html#isObject">isObject</a></li><li data-type='method'><a href="utils.html#isArray">isArray</a></li><li data-type='method'><a href="utils.html#isDate">isDate</a></li><li data-type='method'><a href="utils.html#isNumber">isNumber</a></li><li data-type='method'><a href="utils.html#isInteger">isInteger</a></li><li data-type='method'><a href="utils.html#isString">isString</a></li><li data-type='method'><a href="utils.html#isBoolean">isBoolean</a></li><li data-type='method'><a href="utils.html#isFunction">isFunction</a></li><li data-type='method'><a href="utils.html#isNull">isNull</a></li><li data-type='method'><a href="utils.html#isNil">isNil</a></li><li data-type='method'><a href="utils.html#isPlainObject">isPlainObject</a></li><li data-type='method'><a href="utils.html#hasOwn">hasOwn</a></li><li data-type='method'><a href="utils.html#unique">unique</a></li><li data-type='method'><a href="utils.html#extend">extend</a></li><li data-type='method'><a href="utils.html#freeze">freeze</a></li><li data-type='method'><a href="utils.html#copy">copy</a></li><li data-type='method'><a href="utils.html#getKeyValue">getKeyValue</a></li><li data-type='method'><a href="utils.html#setKeyValue">setKeyValue</a></li><li data-type='method'><a href="utils.html#toArray">toArray</a></li><li data-type='method'><a href="utils.html#toObject">toObject</a></li><li data-type='method'><a href="utils.html#uuid">uuid</a></li><li data-type='method'><a href="utils.html#getBrowser">getBrowser</a></li><li data-type='method'><a href="utils.html#getUriParams">getUriParams</a></li><li data-type='method'><a href="utils.html#getUriParamValue">getUriParamValue</a></li><li data-type='method'><a href="utils.html#saveLocal">saveLocal</a></li><li data-type='method'><a href="utils.html#getLocal">getLocal</a></li><li data-type='method'><a href="utils.html#getLocal2Json">getLocal2Json</a></li><li data-type='method'><a href="utils.html#removeLocal">removeLocal</a></li><li data-type='method'><a href="utils.html#saveCookie">saveCookie</a></li><li data-type='method'><a href="utils.html#getCookie">getCookie</a></li><li data-type='method'><a href="utils.html#removeCookie">removeCookie</a></li><li data-type='method'><a href="utils.html#clearCookie">clearCookie</a></li></ul></li><li><a href="protorypes.date.html">date</a><ul class='methods'><li data-type='method'><a href="protorypes.date.html#.format">format</a></li><li data-type='method'><a href="protorypes.date.html#.modDays">modDays</a></li><li data-type='method'><a href="protorypes.date.html#.modMinutes">modMinutes</a></li><li data-type='method'><a href="protorypes.date.html#.convertDateToTimeStamp">convertDateToTimeStamp</a></li><li data-type='method'><a href="protorypes.date.html#.convertTimeStampToDate">convertTimeStampToDate</a></li></ul></li><li><a href="protorypes.QT.html">QT</a><ul class='methods'><li data-type='method'><a href="protorypes.QT.html#.showLoading">showLoading</a></li></ul></li><li><a href="socket.socket.html">socket</a></li><li><a href="utils.map.default.html">default</a><ul class='members'><li data-type='member'><a href="utils.map.default.html#._map">_map</a></li><li data-type='member'><a href="utils.map.default.html#.Org">Org</a></li><li data-type='member'><a href="utils.map.default.html#.Rcu">Rcu</a></li><li data-type='member'><a href="utils.map.default.html#.Network">Network</a></li><li data-type='member'><a href="utils.map.default.html#.RingNet">RingNet</a></li><li data-type='member'><a href="utils.map.default.html#.Robot">Robot</a></li><li data-type='member'><a href="utils.map.default.html#.Smd">Smd</a></li></ul><ul class='methods'><li data-type='method'><a href="utils.map.default.html#getIcon">getIcon</a></li><li data-type='method'><a href="utils.map.default.html#setIcon">setIcon</a></li></ul></li><li><a href="utils.map.RManager.html">RManager</a><ul class='methods'><li data-type='method'><a href="utils.map.RManager.html#addOverlay">addOverlay</a></li><li data-type='method'><a href="utils.map.RManager.html#addOverlays">addOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#removerOverlay">removerOverlay</a></li><li data-type='method'><a href="utils.map.RManager.html#removeOverlays">removeOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#removeViewingOverlay">removeViewingOverlay</a></li><li data-type='method'><a href="utils.map.RManager.html#removeViewingOverlays">removeViewingOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#clearOverlays">clearOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#clearViewingOverlays">clearViewingOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#getViewingOverlaysByZoom">getViewingOverlaysByZoom</a></li><li data-type='method'><a href="utils.map.RManager.html#show">show</a></li><li data-type='method'><a href="utils.map.RManager.html#hide">hide</a></li><li data-type='method'><a href="utils.map.RManager.html#toggle">toggle</a></li><li data-type='method'><a href="utils.map.RManager.html#getOverlayBykey">getOverlayBykey</a></li><li data-type='method'><a href="utils.map.RManager.html#getOverlays">getOverlays</a></li></ul></li><li><a href="utils.map.RMarker.html">RMarker</a><ul class='methods'><li data-type='method'><a href="utils.map.RMarker.html#_preRenderContent">_preRenderContent</a></li><li data-type='method'><a href="utils.map.RMarker.html#_convertThemeToString">_convertThemeToString</a></li><li data-type='method'><a href="utils.map.RMarker.html#_renderPresetStyles">_renderPresetStyles</a></li><li data-type='method'><a href="utils.map.RMarker.html#enableDragging">enableDragging</a></li><li data-type='method'><a href="utils.map.RMarker.html#disableDragging">disableDragging</a></li><li data-type='method'><a href="utils.map.RMarker.html#isDraggable">isDraggable</a></li><li data-type='method'><a href="utils.map.RMarker.html#getPosition">getPosition</a></li><li data-type='method'><a href="utils.map.RMarker.html#setPosition">setPosition</a></li><li data-type='method'><a href="utils.map.RMarker.html#getAnchor">getAnchor</a></li><li data-type='method'><a href="utils.map.RMarker.html#setAnchor">setAnchor</a></li><li data-type='method'><a href="utils.map.RMarker.html#getContent">getContent</a></li><li data-type='method'><a href="utils.map.RMarker.html#setContent">setContent</a></li><li data-type='method'><a href="utils.map.RMarker.html#getWidth">getWidth</a></li><li data-type='method'><a href="utils.map.RMarker.html#setWidth">setWidth</a></li><li data-type='method'><a href="utils.map.RMarker.html#getHeight">getHeight</a></li><li data-type='method'><a href="utils.map.RMarker.html#setHeight">setHeight</a></li><li data-type='method'><a href="utils.map.RMarker.html#on">on</a></li><li data-type='method'><a href="utils.map.RMarker.html#off">off</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">utils/tools.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>export let tools = {
+  /**
+   * 判断输入是否是Object类型
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example 
+   *  utils.isObject({})  // true
+   */
+  isObject: function (input) {
+    return Object.prototype.toString.call(input) == '[object Object]';
+  },
+  /**
+   * 判断输入是否是Array类型
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example 
+   *  utils.isArray([])  //true
+   */
+  isArray: function (input) {
+    return input instanceof Array || Object.prototype.toString.call(input) == '[object Array]';
+  },
+  /**
+   * 判断输入是否是Date类型
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example 
+   *  utils.isDate(new Date())  //true
+   */
+  isDate: function (input) {
+    return input instanceof Date || Object.prototype.toString.call(input) == '[object Date]';
+  },
+  /**
+   * 判断是否是Number类型
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example 
+   *  utils.isNumber(2)  //true
+   */
+  isNumber: function (input) {
+    return input instanceof Number || Object.prototype.toString.call(input) == '[object Number]';
+  },
+  /**
+   * 判断输入是否整型
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example
+   *  utils.isInteger(1.2)  //false
+   */
+  isInteger: function (input) {
+    return Number.isInteger(input);
+  },
+  /**
+   * 判断输入是否是String类型
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example
+   *  utils.isString('2') //true
+   */
+  isString: function (input) {
+    return input instanceof String || Object.prototype.toString.call(input) == '[object String]';
+  },
+  /**
+   * 判断输入是否是Bool类型
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example
+   *  utils.isBoolean(false) //true
+   */
+  isBoolean: function (input) {
+    return typeof input == 'boolean';
+  },
+  /**
+   * 判断输入是否是Function(函数)
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example
+   *  utils.isFunction(function(){}) //true
+   */
+  isFunction: function (input) {
+    return typeof input == 'function';
+  },
+  /**
+   * 判断输入是否为 null
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example
+   *  utils.isNull(null) //true
+   */
+  isNull: function (input) {
+    return input === null;
+  },
+  /**
+   * 判断输入是否为undefined 或 null
+   * @param {any} input 任意类型的对象
+   * @returns {Boolean}
+   * @example
+   *  utils.isNil(null) //true
+   */
+  isNil: function (input) {
+    return input === undefined || input === null;
+  },
+  /**
+   * 判断对象是否是字面量形式创建的对象
+   * @param {Object} obj 需要被检测的对象
+   * @returns {Boolean}
+   * @example
+   *  utils.isPlainObject(new Object()) //true
+   */
+  isPlainObject: function (obj) {
+    if (obj &amp;&amp; Object.prototype.toString.call(obj) === '[object Object]' &amp;&amp; obj.constructor === Object &amp;&amp; !this.hasOwn(obj, 'constructor')) {
+      let key;
+      for (key in obj) { }
+      return key === undefined || this.hasOwn(obj, key);
+    }
+    return false;
+  },
+  /**
+   * 判断指定对象是否存在指定的属性
+   * @param {Object} obj 需要被检测的对象
+   * @param {String} key 需要被检测的属性
+   * @returns {Boolean}
+   */
+  hasOwn: function (obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+  },
+  /**
+   * 数组去重
+   * @param {Array} array 需要被去重的数组
+   * @returns {Array}
+   */
+  unique: function (array) {
+    let hash = [];
+    for (let i = 0; i &lt; array.length; i++) {
+      for (let j = i + 1; j &lt; array.length; j++) {
+        if (array[i] === array[j])++i;
+      }
+      hash.push(array[i]);
+    }
+    return hash;
+  },
+
+  /**
+   * 合并对象属性
+   * @param {Boolean} deep 可选 指示是否深度合并对象，默认为false
+   * @param {Object} target 目标对象，其他对象的成员属性将被附加到该对象上
+   * @param  {...Object} obj 可选 需要被合并的对象
+   * @returns {Object}
+   */
+  extend: function () {
+    let options;
+    let name;
+    let src;
+    let copy;
+    let copyIsArray;
+    let clone;
+    let target = arguments[0] || {};
+    let i = 1;
+    let length = arguments.length;
+    let deep = false;
+
+    if (typeof target === "boolean") {
+      deep = target;
+      target = arguments[1] || {};
+      i = 2;
+    }
+    if (typeof target !== "object" &amp;&amp; !this.isFunction(target)) {
+      target = {};
+    }
+    if (length === i) {
+      target = this;
+      --i;
+    }
+    for (; i &lt; length; i++) {
+      if ((options = arguments[i]) != null) {
+        for (name in options) {
+          src = target[name];
+          copy = options[name];
+          if (src === copy) {
+            continue;
+          }
+          if (deep &amp;&amp; copy &amp;&amp; (this.isPlainObject(copy) || (copyIsArray = this.isArray(copy)))) {
+            if (copyIsArray) {
+              copyIsArray = false;
+              clone = src &amp;&amp; this.isArray(src) ? src : [];
+            } else {
+              clone = src &amp;&amp; this.isPlainObject(src) ? src : {};
+            }
+            target[name] = this.extend(deep, clone, copy);
+          } else if (copy !== undefined) {
+            target[name] = copy;
+          }
+        }
+      }
+    }
+    return target;
+  },
+  /**
+   * 冻结对象
+   * @param {Object} obj 需要被冻结的对象
+   */
+  freeze: function (obj) {
+    const _this = this;
+    Object.freeze(obj);
+    Object.keys(obj).forEach((key, value) => {
+      if (_this.isObject(obj[key])) {
+        this.freeze(obj[key]);
+      }
+    })
+  },
+  /**
+   * 复制对象(数组或属性)
+   * @param {Object|Array} data 需要被复制的对象
+   * @returns {Object}
+   */
+  copy: function (data) {
+    let _copy = null;
+    if (this.isObject(data)) {
+      _copy = {};
+      for (let key in data) {
+        _copy[key] = data[key];
+      }
+    } else if (this.isArray(data)) {
+      _copy = [];
+      for (let i of data) {
+        _copy.push(this.copy(i));
+      }
+    } else {
+      _copy = data;
+    }
+    return _copy;
+  },
+  /**
+   * 获取对象对应键的值
+   * @param {Object} obj 元对象
+   * @param {Array|String} keypath 元对象的键(的数组)
+   * @returns {Null|any}
+   */
+  getKeyValue: function (obj, keypath) {
+    if (!this.isObject(obj)) {
+      return null;
+    }
+    let array = null;
+    if (this.isArray(keypath)) {
+      array = keypath;
+    } else if (this.isString(keypath)) {
+      array = keypath.split('.');
+    }
+    if (array == null || array.length == 0) {
+      return null;
+    }
+    let value = null;
+    let key = array.shift();
+    const keyTest = key.match(new RegExp("^(\\w+)\\[(\\d+)\\]$"));
+    if (keyTest) {
+      key = keyTest[1];
+      let index = keyTest[2];
+      value = obj[key];
+      if (this.isArray(value) &amp;&amp; value.length > index) {
+        value = value[index];
+      }
+    } else {
+      value = obj[key];
+    }
+
+    if (array.length > 0) {
+      return this.getKeyValue(value, array);
+    }
+    return value;
+  },
+  /**
+   * 设定键值
+   * @param {Object} obj 需设定键值的对象
+   * @param {Array|String} keypath 需要设定的键(的数组)
+   * @param {any} value 需要设置的值
+   * @param {Object} orignal 元对象
+   * @returns {Boolean|Object}
+   */
+  setKeyValue: function (obj, keypath, value, orignal) {
+    if (!this.isObject(obj)) {
+      return false;
+    }
+    let array = null;
+    if (this.isArray(keypath)) {
+      array = keypath;
+    } else if (this.isString(keypath)) {
+      array = keypath.split('.');
+      origin = obj;
+    }
+    if (array == null || array.length == 0) {
+      return false;
+    }
+    let children = null;
+    let index = 0;
+    let key = array.shift();
+    const keyTest = key.match(new RegExp("^(\\w+)\\[(\\d+)\\]$"));
+    if (keyTest) {
+      key = keyTest[1];
+      index = keyTest[2];
+      children = obj[key];
+      if (this.isArray(children) &amp;&amp; children.length > index) {
+        if (array.length > 0) {
+          return this.setKeyValue(children[key], array, value, orignal);
+        }
+        children[index] = value;
+      }
+    } else {
+      if (array.length > 0) {
+        return this.setKeyValue(obj[key], array, value, orignal);
+      }
+      obj[key] = value;
+    }
+    return orignal;
+  },
+  /**
+   * 对象转换为数组
+   * @param {Object} obj 需要被转换为数组的对象
+   * @param {String} keyName 可选
+   * @param {String} arg3 可选 
+   * @returns {Array}
+   */
+  toArray: function (obj, keyName, arg3) {
+    let titleName = '';
+    if (!this.isObject(obj)) {
+      return [];
+    }
+    if (this.isString(arg3)) {
+      titleName = arg3;
+    }
+    let listObj = [];
+    for (let o in obj) {
+      let value = obj[o];
+      let n = {};
+      if (this.isObject(value)) {
+        n = value;
+      } else {
+        n[titleName] = value;
+      }
+      if (keyName) {
+        n[keyName] = o;
+      }
+      listObj.push(n);
+    }
+    return listObj;
+  },
+  /**
+   * 数组转换为对象
+   * @param {Array} list 需要转换为对象的数组
+   * @param {String} idName 可选 键 默认 'id'
+   * @param {Boolean} hasNum 可选 是否计算count属性 默认 'false'
+   * @returns {Object}
+   */
+  toObject: function (list, idName = 'id', hasNum = false) {
+    let listObj = {};
+    for (let i = 0, n; n = list[i]; i++) {
+      if (this.isObject(n)) {
+        if (idName == 'count') {
+          listObj[i] = n;
+        } else {
+          listObj[n[idName]] = n;
+          if (hasNum) {
+            listObj[n[idName]].count = i;
+          }
+        }
+      } else {
+        listObj[n] = n;
+      }
+    }
+    return listObj;
+  },
+  /**
+   * 获取uuid
+   */
+  uuid: function () {
+    const s4 = () => {
+      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    };
+    return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
+  },
+  // /**
+  //  * 
+  //  * @param {Object} opts 
+  //  * @param {} opts.value
+  //  * @param {} opts.dict
+  //  * @param {} opts.connector
+  //  * @param {} opts.keyField
+  //  * @param {} opts.titleField
+  //  * @returns {String}
+  //  */
+  dictMapping: function (opts) {
+    if (!dict || this.isNull(value)) return '';
+    if (connector) {
+      value = value.split(connector);
+    }
+    if (!this.isNull(value) &amp;&amp; value !== '' &amp;&amp; dict) {
+      if (!this.isArray(value)) {
+        value = [value];
+      }
+    }
+    if (value.length &lt;= 0) {
+      return '';
+    }
+
+    if (this.isArray(dict)) {
+      dict = this.toObject(dict, keyField);
+    }
+    return value.map((ele) => {
+      if (this.isObject(ele)) {
+        return ele[titleField];
+      }
+      const d = dict[ele];
+      if (this.isObject(d)) {
+        return d[titleField];
+      }
+      return d;
+    }).filter(ele => (ele &amp;&amp; ele !== '')).join(', ');
+  },
+  /**
+   * 获取浏览器标识
+   * @returns {Object}
+   */
+  getBrowser: function () {
+    let ua = window.navigator.userAgent;
+    let _brower = {
+      ua: ua,
+      isIE: window.ActiveXObject != undefined &amp;&amp; ua.indexOf("MSIE") > -1,
+      isFirefox: ua.indexOf("Firefox") > -1,
+      isOpera: ua.indexOf("Opera") > -1,
+      isChrome: ua.indexOf("Chrome") > -1 &amp;&amp; !!window.chrome,
+      isSafari: ua.indexOf("Safari") > -1 &amp;&amp; ua.indexOf("Chrome") == -1,
+      isAndroid: ua.indexOf("android") > -1,
+      isIOS: ua.indexOf("iPhoneiPadiPodiOS") > -1,
+      isLinux: ua.indexOf("Linux") > -1,
+      isLinuxOS: window.platform ? window.platform.indexOf("Linux") > -1 : false,
+      isWeChart: window.platform ? window.platform.indexOf("MicroMessenger") > -1 : false
+    };
+    let _browerUA = '';
+    Object.keys(_brower).forEach(key => {
+      if (_brower[key] == true &amp;&amp; _browerUA == '') {
+        _browerUA = key.substring(2);
+      }
+    });
+    _brower.currentUA = _browerUA;
+    return _brower;
+  },
+  /**
+   * 获取Uri参数键值对数组
+   * @returns {Object}
+   * @example 
+   *  utils.getUriParams()  //{username:admin, password:123456}
+   */
+  getUriParams: function () {
+    let res = {};
+    let search = decodeURI(window.location.search).indexOf('?') == 0 ? decodeURI(window.location.search).substring(1) : decodeURI(window.location.search);
+    search = decodeURIComponent(search).replace(/&amp;&amp;/g, `${encodeURIComponent('&amp;')}&amp;`);
+    search.split('&amp;').map(function (item) {
+      let d = item.split('=');
+      res[d[0].trim().toLowerCase()] = decodeURIComponent(d[1] || '')
+    });
+    return res;
+  },
+  /**
+   * 获取Uri参数值
+   * @param {String} param 需要获取的uri参数的键,不区分字母大小写
+   * @param {Boolean} isEmpty 可选 是否返回空字符串,如果没有找到该参数的话 默认false
+   * @returns {Undefined|String}
+   * @example
+   *  utils.getUriParamValue('username') //admin
+   */
+  getUriParamValue: function (param, isEmpty) {
+    let _params = this.getUriParams();
+    if (!this.isBoolean(isEmpty)) {
+      isEmpty = false;
+    }
+    if (isEmpty) {
+      return _params[param.trim().toLowerCase()] || '';
+    }
+    return _params[param.trim().toLowerCase()];
+  },
+
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Nov 09 2018 14:20:26 GMT+0800 (中国标准时间) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+</body>
+</html>

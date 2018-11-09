@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>utils.map/utils.map.defaults.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="utils.html">utils</a><ul class='methods'><li data-type='method'><a href="utils.html#isObject">isObject</a></li><li data-type='method'><a href="utils.html#isArray">isArray</a></li><li data-type='method'><a href="utils.html#isDate">isDate</a></li><li data-type='method'><a href="utils.html#isNumber">isNumber</a></li><li data-type='method'><a href="utils.html#isInteger">isInteger</a></li><li data-type='method'><a href="utils.html#isString">isString</a></li><li data-type='method'><a href="utils.html#isBoolean">isBoolean</a></li><li data-type='method'><a href="utils.html#isFunction">isFunction</a></li><li data-type='method'><a href="utils.html#isNull">isNull</a></li><li data-type='method'><a href="utils.html#isNil">isNil</a></li><li data-type='method'><a href="utils.html#isPlainObject">isPlainObject</a></li><li data-type='method'><a href="utils.html#hasOwn">hasOwn</a></li><li data-type='method'><a href="utils.html#unique">unique</a></li><li data-type='method'><a href="utils.html#extend">extend</a></li><li data-type='method'><a href="utils.html#freeze">freeze</a></li><li data-type='method'><a href="utils.html#copy">copy</a></li><li data-type='method'><a href="utils.html#getKeyValue">getKeyValue</a></li><li data-type='method'><a href="utils.html#setKeyValue">setKeyValue</a></li><li data-type='method'><a href="utils.html#toArray">toArray</a></li><li data-type='method'><a href="utils.html#toObject">toObject</a></li><li data-type='method'><a href="utils.html#uuid">uuid</a></li><li data-type='method'><a href="utils.html#getBrowser">getBrowser</a></li><li data-type='method'><a href="utils.html#getUriParams">getUriParams</a></li><li data-type='method'><a href="utils.html#getUriParamValue">getUriParamValue</a></li><li data-type='method'><a href="utils.html#saveLocal">saveLocal</a></li><li data-type='method'><a href="utils.html#getLocal">getLocal</a></li><li data-type='method'><a href="utils.html#getLocal2Json">getLocal2Json</a></li><li data-type='method'><a href="utils.html#removeLocal">removeLocal</a></li><li data-type='method'><a href="utils.html#saveCookie">saveCookie</a></li><li data-type='method'><a href="utils.html#getCookie">getCookie</a></li><li data-type='method'><a href="utils.html#removeCookie">removeCookie</a></li><li data-type='method'><a href="utils.html#clearCookie">clearCookie</a></li></ul></li><li><a href="protorypes.date.html">date</a><ul class='methods'><li data-type='method'><a href="protorypes.date.html#.format">format</a></li><li data-type='method'><a href="protorypes.date.html#.modDays">modDays</a></li><li data-type='method'><a href="protorypes.date.html#.modMinutes">modMinutes</a></li><li data-type='method'><a href="protorypes.date.html#.convertDateToTimeStamp">convertDateToTimeStamp</a></li><li data-type='method'><a href="protorypes.date.html#.convertTimeStampToDate">convertTimeStampToDate</a></li></ul></li><li><a href="protorypes.QT.html">QT</a><ul class='methods'><li data-type='method'><a href="protorypes.QT.html#.showLoading">showLoading</a></li></ul></li><li><a href="socket.socket.html">socket</a></li><li><a href="utils.map.default.html">default</a><ul class='members'><li data-type='member'><a href="utils.map.default.html#._map">_map</a></li><li data-type='member'><a href="utils.map.default.html#.Org">Org</a></li><li data-type='member'><a href="utils.map.default.html#.Rcu">Rcu</a></li><li data-type='member'><a href="utils.map.default.html#.Network">Network</a></li><li data-type='member'><a href="utils.map.default.html#.RingNet">RingNet</a></li><li data-type='member'><a href="utils.map.default.html#.Robot">Robot</a></li><li data-type='member'><a href="utils.map.default.html#.Smd">Smd</a></li></ul><ul class='methods'><li data-type='method'><a href="utils.map.default.html#getIcon">getIcon</a></li><li data-type='method'><a href="utils.map.default.html#setIcon">setIcon</a></li></ul></li><li><a href="utils.map.RManager.html">RManager</a><ul class='methods'><li data-type='method'><a href="utils.map.RManager.html#addOverlay">addOverlay</a></li><li data-type='method'><a href="utils.map.RManager.html#addOverlays">addOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#removerOverlay">removerOverlay</a></li><li data-type='method'><a href="utils.map.RManager.html#removeOverlays">removeOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#removeViewingOverlay">removeViewingOverlay</a></li><li data-type='method'><a href="utils.map.RManager.html#removeViewingOverlays">removeViewingOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#clearOverlays">clearOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#clearViewingOverlays">clearViewingOverlays</a></li><li data-type='method'><a href="utils.map.RManager.html#getViewingOverlaysByZoom">getViewingOverlaysByZoom</a></li><li data-type='method'><a href="utils.map.RManager.html#show">show</a></li><li data-type='method'><a href="utils.map.RManager.html#hide">hide</a></li><li data-type='method'><a href="utils.map.RManager.html#toggle">toggle</a></li><li data-type='method'><a href="utils.map.RManager.html#getOverlayBykey">getOverlayBykey</a></li><li data-type='method'><a href="utils.map.RManager.html#getOverlays">getOverlays</a></li></ul></li><li><a href="utils.map.RMarker.html">RMarker</a><ul class='methods'><li data-type='method'><a href="utils.map.RMarker.html#_preRenderContent">_preRenderContent</a></li><li data-type='method'><a href="utils.map.RMarker.html#_convertThemeToString">_convertThemeToString</a></li><li data-type='method'><a href="utils.map.RMarker.html#_renderPresetStyles">_renderPresetStyles</a></li><li data-type='method'><a href="utils.map.RMarker.html#enableDragging">enableDragging</a></li><li data-type='method'><a href="utils.map.RMarker.html#disableDragging">disableDragging</a></li><li data-type='method'><a href="utils.map.RMarker.html#isDraggable">isDraggable</a></li><li data-type='method'><a href="utils.map.RMarker.html#getPosition">getPosition</a></li><li data-type='method'><a href="utils.map.RMarker.html#setPosition">setPosition</a></li><li data-type='method'><a href="utils.map.RMarker.html#getAnchor">getAnchor</a></li><li data-type='method'><a href="utils.map.RMarker.html#setAnchor">setAnchor</a></li><li data-type='method'><a href="utils.map.RMarker.html#getContent">getContent</a></li><li data-type='method'><a href="utils.map.RMarker.html#setContent">setContent</a></li><li data-type='method'><a href="utils.map.RMarker.html#getWidth">getWidth</a></li><li data-type='method'><a href="utils.map.RMarker.html#setWidth">setWidth</a></li><li data-type='method'><a href="utils.map.RMarker.html#getHeight">getHeight</a></li><li data-type='method'><a href="utils.map.RMarker.html#setHeight">setHeight</a></li><li data-type='method'><a href="utils.map.RMarker.html#on">on</a></li><li data-type='method'><a href="utils.map.RMarker.html#off">off</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">utils.map/utils.map.defaults.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function (utils) {
+  utils.map = utils.map = utils.map || {};
+
+  
+  /*** utils.map.default 代码开始 ***/
+  /**
+   * @class
+   * @alias utils.map.default
+   * @description 记录各种marker背景图标定义,每新增一种类型,需手工维护此文档
+   * @type typeJson
+   * @example 类型状态配置Json说明
+   * {
+   *  url: 'url(../image.png)',     //必要属性 图标链接 
+   *  size: new BMap.Size(64, 64),  //必要属性 图标大小
+   *  status: '状态'                //非必要属性 图标所标识的状态
+   * }
+   * 
+   */
+  utils.map.default = function () {
+  };
+
+  (function () {
+
+    /**
+     * 存放实例化后的BMap对象
+     * @const utils.map.default._map
+     */
+    utils.map.default._map = null;
+    /**
+     * 组织图标信息，无状态属性
+     * @property {Json}  utils.map.default.Org.Qif_Org 组织图标信息
+     */
+    utils.map.default.Org = {
+      Qif_Org: {
+        url: 'url(/Images/yunweiban.png)',
+        size: new BMap.Size(50, 40),
+        status: ''
+      }
+    };
+
+    /**
+     * 变电站各种状态图标信息
+     * @property {Json}  utils.map.default.Rcu.Qif_Online 变电站在线状态图标信息
+     * @property {Json}  utils.map.default.Rcu.Qif_Offline 变电站离线线状态图标信息
+     * @property {Json}  utils.map.default.Rcu.Qif_On_Alarm 变电站在线报警状态图标信息
+     * @property {Json}  utils.map.default.Rcu.Qif_Off_Alarm 变电站离线报警状态图标信息
+     */
+    utils.map.default.Rcu = {
+      Qif_Online: {
+        url: 'url(/Nodes/images/Ronline.png)',
+        size: new BMap.Size(27, 35),
+        status: '在线'
+      },
+      Qif_Offline: {
+        url: 'url(/Nodes/images/Roffline.png)',
+        size: new BMap.Size(27, 35),
+        status: '离线'
+      },
+      Qif_On_Alarm: {
+        url: 'url(/Nodes/images/Ronline_a.gif)',
+        size: new BMap.Size(27, 35),
+        status: '在线|报警'
+      },
+      Qif_Off_Alarm: {
+        url: 'url(/Nodes/images/Roffline_a.gif)',
+        size: new BMap.Size(27, 35),
+        status: '离线|报警'
+      }
+    };
+
+    /**
+     * 配网所各种状态图标信息
+     * @property {Json}  utils.map.default.Network.Qif_Online 配网所在线状态图标信息
+     * @property {Json}  utils.map.default.Network.Qif_Offline 配网所离线线状态图标信息
+     * @property {Json}  utils.map.default.Network.Qif_On_Alarm 配网所在线报警状态图标信息
+     * @property {Json}  utils.map.default.Network.Qif_Off_Alarm 配网所离线报警状态图标信息
+     */
+    utils.map.default.Network = {
+      Qif_Online: {
+        url: 'url(/Nodes/images/Nonline.png)',
+        size: new BMap.Size(27, 35),
+        status: '在线'
+      },
+      Qif_Offline: {
+        url: 'url(/Nodes/images/Noffline.png)',
+        size: new BMap.Size(27, 35),
+        status: '离线'
+      },
+      Qif_On_Alarm: {
+        url: 'url(/Nodes/images/Nonline_a.gif)',
+        size: new BMap.Size(27, 35),
+        status: '在线|报警'
+      },
+      Qif_Off_Alarm: {
+        url: 'url(/Nodes/images/Noffline_a.gif)',
+        size: new BMap.Size(27, 35),
+        status: '离线|报警'
+      }
+    };
+
+    /**
+     * 环网柜各种状态图标信息
+     * @property {Json}  utils.map.default.RingNet.Qif_Online 环网柜在线状态图标信息
+     * @property {Json}  utils.map.default.RingNet.Qif_Offline 环网柜离线线状态图标信息
+     * @property {Json}  utils.map.default.RingNet.Qif_On_Alarm 环网柜在线报警状态图标信息
+     * @property {Json}  utils.map.default.RingNet.Qif_Off_Alarm 环网柜离线报警状态图标信息
+     */
+    utils.map.default.RingNet = {
+      Qif_Online: {
+        url: 'url(/Nodes/images/Honline.png)',
+        size: new BMap.Size(27, 35),
+        status: '在线'
+      },
+      Qif_Offline: {
+        url: 'url(/Nodes/images/Hoffline.png)',
+        size: new BMap.Size(27, 35),
+        status: '离线'
+      },
+      Qif_On_Alarm: {
+        url: 'url(/Nodes/images/Honline_a.gif)',
+        size: new BMap.Size(27, 35),
+        status: '在线|报警'
+      },
+      Qif_Off_Alarm: {
+        url: 'url(/Nodes/images/Hoffline_a.gif)',
+        size: new BMap.Size(27, 35),
+        status: '离线|报警'
+      }
+    };
+
+    /**
+     * 机器人各种状态图标信息
+     * @property {Json}  utils.map.default.Robot.Qif_Online 机器人在线状态图标信息
+     * @property {Json}  utils.map.default.Robot.Qif_Offline 机器人离线线状态图标信息
+     */
+    utils.map.default.Robot = {
+      Qif_Online: {
+        url: 'url(/Nodes/images/Robot_Online.png)',
+        size: new BMap.Size(30, 40),
+        status: '在线'
+      },
+      Qif_Offline: {
+        url: 'url(/Nodes/images/Robot_Offline.png)',
+        size: new BMap.Size(30, 40),
+        status: '离线'
+      }
+    };
+
+    /**
+     * 防外破各种状态图标信息
+     * @property {Json}  utils.map.default.Smd.Qif_Online 防外破在线状态图标信息
+     * @property {Json}  utils.map.default.Smd.Qif_On_Alarm 防外破在线报警状态图标信息
+     */
+    utils.map.default.Smd = {
+      Qif_Online: {
+        url: 'url(/Nodes/images/smd_Online.png)',
+        size: new BMap.Size(27, 35),
+        status: '在线'
+      },
+      Qif_On_Alarm: {
+        url: 'url(/Nodes/images/smd_Alarm.gif)',
+        size: new BMap.Size(27, 35),
+        status: '报警'
+      }
+    };
+
+    /**
+     * 室内地面机器人各种状态图标信息
+     * @property {Json}  utils.map.default[70220002].Qif_Inspection 室内地面机器人巡检状态图标信息
+     * @property {Json}  utils.map.default[70220002].Qif_Fault 室内地面机器人故障报警状态图标信息
+     * @property {Json}  utils.map.default[70220002].Qif_Stop 室内地面机器人停止报警状态图标信息
+     */
+    utils.map.default[70220002] = {
+      Qif_Inspection: {
+        url: 'url(/Nodes/images/Fold_Inspection.png)',
+        size: new BMap.Size(64, 64),
+        status: '巡检'
+      },
+      Qif_Fault: {
+        url: 'url(/Nodes/images/Fold_Inspection.png)',
+        size: new BMap.Size(64, 64),
+        status: '故障'
+      },
+      Qif_Stop: {
+        url: 'url(/Nodes/images/Fold_Inspection.png)',
+        size: new BMap.Size(64, 64),
+        status: ''
+      }
+    };
+
+    /**
+     * 室外机器人各种状态图标信息
+     * @property {Json}  utils.map.default[70220003].Qif_Inspection 室外机器人巡检状态图标信息
+     * @property {Json}  utils.map.default[70220003].Qif_Fault 室外机器人故障报警状态图标信息
+     * @property {Json}  utils.map.default[70220003].Qif_Stop 室外机器人停止报警状态图标信息
+     */
+    utils.map.default[70220003] = {
+      Qif_Inspection: {
+        url: 'url(/Nodes/images/Outdoor_Inspection.png)',
+        size: new BMap.Size(64, 64),
+        status: '巡检'
+      },
+      Qif_Fault: {
+        url: 'url(/Nodes/images/Outdoor_Inspection.png)',
+        size: new BMap.Size(64, 64),
+        status: '故障'
+      },
+      Qif_Stop: {
+        url: 'url(/Nodes/images/Outdoor_Inspection.png)',
+        size: new BMap.Size(64, 64),
+        status: '停止'
+      }
+    };
+
+    /**
+     * 虚拟机器人各种状态图标信息
+     * @property {Json}  utils.map.default[70220004].Qif_Inspection 虚拟机器人巡检状态图标信息
+     * @property {Json}  utils.map.default[70220004].Qif_Fault 虚拟机器人故障报警状态图标信息
+     * @property {Json}  utils.map.default[70220004].Qif_Stop 虚拟机器人停止报警状态图标信息
+     */
+    utils.map.default[70220004] = {
+      Qif_Inspection: {
+        url: 'url(/Nodes/images/Virtual_Inspection.png)',
+        size: new BMap.Size(64, 64),
+        status: '巡检'
+      },
+      Qif_Fault: {
+        url: 'url(/Nodes/images/Virtual_Inspection.png)',
+        size: new BMap.Size(64, 64),
+        status: '故障'
+      },
+      Qif_Stop: {
+        url: 'url(/Nodes/images/Virtual_Inspection.png)',
+        size: new BMap.Size(64, 64),
+        status: '停止'
+      }
+    };
+
+    /**
+     * 获取预设的Marker背景图标相关信息
+     * @param {String} type 需要获取的图标的类型
+     * @param {String} subtype 需要获取的图标的子类型
+     * @returns {undefined|Json} 匹配的预设图标信息
+     */
+    utils.map.default.prototype.getIcon = function (type, subtype) {
+      var returns = undefined;
+      if (utils.map.tools.isString(type) &amp;&amp; type.trim() != '') {
+        returns = this[type];
+      }
+      if (returns !== undefined &amp;&amp; utils.map.tools.isString(subtype) &amp;&amp; subtype.trim() != '') {
+        returns = returns[subtype];
+      }
+      return returns;
+    }
+
+    /**
+     * 设置公共的Marker背景图标相关信息
+     * 使用频率较低的图标可以通过此方法在页面头部预先定义
+     * 使用频率较高的图标可以通过在文件中预设图标对象形式定义
+     * @param {String} type 需要定义的图标的类型
+     * @param {Json} opts 需要定义的图标的信息
+     * @param {String} opts.type 需要定义的图标的子类型
+     * @param {String} opts.type.url 需要定义的图标的链接
+     * @param {BMap.Size} opts.type.size 需要定义的图标的大小
+     * @param {String} opts.type.stauts 需要定义的图标所标识的状态
+     * @returns {Boolean} 添加成功返回true，检测到有重复类型则返回false
+     */
+    utils.map.default.prototype.setIcon = function (type, opts) {
+      if (this[type] == undefined) {
+        this[type] = opts;
+        return true;
+      }
+      return false;
+    }
+  })()
+  /*** utils.map.default 代码结束 ***/
+})(window.utils || (window.utils = {}))</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Nov 09 2018 14:20:26 GMT+0800 (中国标准时间) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+</body>
+</html>
