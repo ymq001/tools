@@ -1,7 +1,7 @@
 ### map相关配置说明
 
--- [各省市区中心坐标 文档](../../tutorials/bmap_city.center.txt) **此文档存在于项目根目录 BaiduMap_cityCenter.txt**
--- 配置中心点 -->
+* [各省市区中心坐标 文档](../../tutorials/bmap_city.center.txt) **此文档存在于项目根目录 BaiduMap_cityCenter.txt**
+- **配置中心点**
   1. 找到系统配置表中 关键字为 **GISMap** 的配置项 配置 地图瓦片存放目录
   2. 找到系统配置表中 关键字为 **MapMaxZoom** 的配置项 配置 地图最大缩放级别
   3. 找到系统配置表中 关键字为 **MapMinZoom** 的配置项 配置 地图最小缩放级别
