@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>utils demo</title>
+  <!-- <script src="../../dist/vendor.js" defer></script> -->
+  <!-- <script src="../../dist/lib/utils.js" defer></script> -->
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+  <!-- <script src="../../src/utils.map/index.js" defer></script> -->
+  <script src="../../dist/lib/utils.map.js" defer></script>
+</head>
+
+<body>
+  <div style="width:700px;height:400px;border:1px solid gray;margin:10px 0 0 10px;" id="container"></div>
+  <script type="text/javascript">
+    window.onload = function () {
+      map = new BMap.Map("container");
+      map.centerAndZoom(new BMap.Point(116.401952, 40.032704), 12);
+      map.enableScrollWheelZoom();
+      var top_left_control = new BMap.ScaleControl({ anchor: BMAP_ANCHOR_TOP_LEFT });// 左上角，添加比例尺
+      var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
+      map.addControl(top_left_control);
+      map.addControl(top_left_navigation);
+
+      var mm = [
+        {
+          point: new BMap.Point(116.30816, 32.714969),
+          text: '啊是大家',
+          minZoom: 0,
+          maxZoom: 18
+        },
+        {
+          point: new BMap.Point(116.30816, 32.714969),
+          text: '啊是15-18大家',
+          minZoom: 15,
+          maxZoom: 18
+        },
+        {
+          point: new BMap.Point(116.30816, 32.814969),
+          text: '啊是10-12大家',
+          minZoom: 10,
+          maxZoom: 12
+        },
+        {
+          point: new BMap.Point(116.39816, 32.814969),
+          text: '啊是13-14大家',
+          minZoom: 13,
+          maxZoom: 14
+        },
+        {
+          point: new BMap.Point(116.35816, 32.674969),
+          text: '啊是5-9大家',
+          minZoom: 5,
+          maxZoom: 9
+        },
+        {
+          point: new BMap.Point(116.401816, 40.73969),
+          text: '啊是2-4大家',
+          minZoom: 2,
+          maxZoom: 4
+        },
+        {
+          point: new BMap.Point(116.401952, 40.032704),
+          text: '啊是0-12大家',
+          minZoom: 0,
+          maxZoom: 12
+        }
+      ]
+      window.myRMarkers = [];
+      for (var i = 0, item; item = mm[i]; i++) {
+        myRMarkers.push(new utils.map.RMarker(item.point, {
+          url: 'images/yunweiban.png',
+          size: new BMap.Size(50, 40)
+        }, {
+            "anchor": new BMap.Size(-47, -116),
+            "enableDragging": true,
+            text: item.text,
+            count: i,
+            isShowCount: true,
+            attrs: {
+              rcuId: 123,
+              minZoom: item.minZoom,
+              maxZoom: item.maxZoom
+            }
+          }));
+      }
+      window.rmanager = new utils.map.RManager(map);
+      rmanager.addOverlays(myRMarkers);
+    }
+  </script>
+</body>
+
+</html>
