@@ -50,7 +50,6 @@ let options = {
 };
 
 let entries = new glob.Glob(pathMatch, options).found;
-let entry = {};
 
 entries.forEach((page) => {
   let filename = page.substring(0, page.lastIndexOf('.'));

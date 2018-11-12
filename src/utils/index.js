@@ -6,7 +6,7 @@ import { protorypes } from './prototype';
 // import { socket } from './socket';
 
 /**
- * @description 基础工具类集合
+ * @description 基础工具类集合 {@link http://172.26.1.40/docs/examples/utils.html|Utils示例}
  * @author codeD
  * @date 2018-11-02
  * @export utils
