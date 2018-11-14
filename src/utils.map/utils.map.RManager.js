@@ -5,7 +5,9 @@
   /*** utils.map.RManager 代码开始 ***/
   /**
    * utils.map.RManager类的构造函数
-   * @class utils.map.RManager
+   * @class
+   * @alias utils.map.RManager
+   * @classdesc utils.map.RManager
    * @description 自定义点聚合，实现按组织聚合的效果。 {@link http://172.26.1.40/docs/examples/rmanager.html|RManager示例} <br />
    * 实现缓存机制，首屏只加载可视区域内的覆盖物 <br />
    * 实现根据自定义属性过滤覆盖物效果 <br />
@@ -23,7 +25,7 @@
    * 
    * @param {BMap.Map} map 百度地图BMap的实例
    * @param {Json} opts 可选参数,非必要选项
-   * @param {Number} opts.padding 可视区域的外填充，默认 6
+   * @param {Number} opts.padding 可视区域的外填充，默认 0
    * @param {Number} opts.minZoom 地图最大缩放级别，默认 6
    * @param {Number} opts.maxZoom 地图最小缩放级别，默认 16
    * @param {Function} opts.filter 数据过滤函数，必须返回boolean类型的值

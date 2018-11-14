@@ -6,7 +6,9 @@
   /**
    * @class
    * @alias utils.map.default
-   * @description 记录各种marker背景图标定义,每新增一种类型,需手工维护此文档
+   * @classdesc utils.map.default
+   * @description 记录各种marker背景图标定义,每新增一种类型,需手工维护此文档 <br /> <span style="color: red;">此对象不用实例化</span>
+   * @static
    * @type typeJson
    * @example 类型状态配置Json说明
    * {

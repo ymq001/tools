@@ -2,7 +2,7 @@ export let protorypes = {
   /**
    * 扩展Date 常用函数
    * @class
-   * @classdesc utils.date
+   * @alias utils.date
    */
   date: {
     /**
@@ -136,7 +136,7 @@ export let protorypes = {
   /**
    * 与QT常用交互
    * @class
-   * @classdesc utils.QT
+   * @alias utils.QT
    */
   QT: {
     /**

@@ -3,7 +3,9 @@
   /*** utils.map.RMarker 代码开始 ***/
   /**
    * utils.map.RMarker类的构造函数
-   * @class utils.map.RMarker
+   * @class
+   * @alias utils.map.RMarker
+   * @classdesc utils.map.RMarker
    * @description 自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/rmarker.html|RMarker示例}
    * 
    * @constructor
@@ -949,7 +951,7 @@
    * });
    */
   utils.map.RMarker.prototype.on = function (type, handler, key) {
-    utils.map.tools.lang.addEventListener(type, handler, key);
+    this.addEventListener(type, handler, key);
   }
 
   /**
@@ -963,7 +965,7 @@
    * myRMarkerObject.off("ondragend");
    */
   utils.map.RMarker.prototype.off = function (type, handler) {
-    utils.map.tools.lang.removeEventListener(type, handler);
+    this.removeEventListener(type, handler);
   }
 
   /**

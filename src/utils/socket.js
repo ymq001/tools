@@ -151,6 +151,7 @@ export let socket = {
    * 封装webSocket相关API
    * 支持断线重连、批量注册回调、二次通信等
    * @class
+   * @alias utils.socket
    * @property {Boolean} isReconnect 标识是否断开重连的开关, 默认开启
    * @property {Object} socket 标识socket实例
    * @property {String} host 标识需要连接的ws地址
