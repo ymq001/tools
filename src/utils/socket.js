@@ -258,6 +258,10 @@
       messageHandlers: this._messageHandlers
     }, opts);
 
+    if(!(this instanceof socket)){
+      throw ('使用该对象时，请使用关键字 "new"');
+    }
+
     this._setPropertys();
   }
   /**
@@ -267,12 +271,13 @@
    */
   socket.prototype._setPropertys = function () {
     if (this._opts.isReconnect != undefined && !utils.isBoolean(this._opts.isReconnect)) {
-      console.log('请检查参数[opts.isReconnect]的数据类型是否是boolean类型');
-      return false;
+      throw('请检查参数[opts.isReconnect]的数据类型是否是boolean类型');
     }
-    if (this._opts.isReconnect != undefined && !utils.isBoolean(this._opts.isReconnect)) {
-      console.log('请检查参数[opts.isReconnect]的数据类型是否是boolean类型');
-      return false;
+    if (!utils.isString(this._opts.port) || !this._opts.port.length) {
+      throw('请检查参数[opts.port]的数据类型是否是String类型');
+    }
+    if (!utils.isString(this._opts.host) || /^(?:(?:2[0-4][0-9]\.)|(?:25[0-5]\.)|(?:1[0-9][0-9]\.)|(?:[1-9][0-9]\.)|(?:[0-9]\.)){3}(?:(?:2[0-5][0-5])|(?:25[0-5])|(?:1[0-9][0-9])|(?:[1-9][0-9])|(?:[0-9]))$/.test(this._opts.host) == false) {
+      throw('请检查参数[opts.port]的数据类型是否是String类型');
     }
   }
 

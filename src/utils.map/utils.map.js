@@ -1,19 +1,17 @@
 (function (utils) {
-  /**
-   * @class
-   */
-  utils.map = utils.map = utils.map || {};
-
   /*** utils.map 代码开始 ***/
+
+  /**
+   * @class 
+   * <span style="color: red;">此对象不用实例化</span>
+   */
+  utils.map = utils.map || {};
 
   /**
    * 初始化地图配置
    * 地图常规设置(中心点坐标、最大最小缩放层级)
    * 常规设置(拖拽平移、滚轮缩放、双击放大)
    * 常规控件(缩略图、比例尺、拖拽选取)
-   * 
-   * @method
-   * @static
    * 
    * @property {BMap.Map} _map 百度地图实例
    * @property {utils.map.RData} _rdata 数据处理类实例，如不需要，可以忽略
@@ -45,51 +43,57 @@
   utils.map.initialize = function (opts) {
     opts = opts || {};
 
-    this.attrs = {
-      _map: undefined,
-      _rdata: undefined,
-      _rmanager: undefined,
-      _isProd: true,
-      _opts: {}
+    _initialize.call(utils.map);
+    
+    function _initialize(){
+      this.attrs = {
+        _map: undefined,
+        _rdata: undefined,
+        _rmanager: undefined,
+        _isProd: true,
+        _opts: {}
+      }
+      if (!utils.map.tools.isString(opts.mapId)) {
+        _alert('请检查参数[mapId] 是否正确', '请正确配置地图容器标识');
+        return;
+      }
+      if (!opts.mapCenter || !utils.map.tools.isNumber(opts.mapCenter.x) || !utils.map.tools.isNumber(opts.mapCenter.x)) {
+        _alert('请检查参数[mapCenter] 是否正确', '请正确配置地图中心点');
+        return;
+      }
+      if (!utils.map.tools.isNumber(opts.mapMaxZoom)) {
+        _alert('请检查参数[mapMaxZoom] 是否正确', '请正确配置最大缩放级别');
+        return;
+      }
+      if (!utils.map.tools.isNumber(opts.mapMinZoom)) {
+        _alert('请检查参数[mapMinZoom] 是否正确', '请正确配置最小缩放级别');
+        return;
+      }
+  
+      var _filter = function () { return true; };
+      this.attrs._opts = utils.map.tools.extend({
+        mapId: undefined,
+        mapCenter: {
+          x: 118.807535,
+          y: 32.113292
+        },
+        mapZoom: 12,
+        mapMaxZoom: 6,
+        mapMinZoom: 16,
+        isEnableDragging: true,
+        isEnableScrollWheelZoom: true,
+        isDisableDbClickZoom: false,
+        isEnableNavigation: true,
+        isEnableOverview: true,
+        isProd: this.attrs._isProd,
+        padding: 0,
+        filter: _filter
+      }, opts);
+      this.attrs._isProd = this.attrs._opts.isProd;
+      this.attrs._opts.filter = utils.map.tools.isFunction(this.attrs._opts.filter) ? this.attrs._opts.filter : _filter;
+  
+      this._initializeMap();
     }
-    if (!utils.map.tools.isString(opts.mapId)) {
-      _alert('请检查参数[mapId] 是否正确', '请正确配置地图容器标识');
-      return;
-    }
-    if (!opts.mapCenter || !utils.map.tools.isNumber(opts.mapCenter.x) || !utils.map.tools.isNumber(opts.mapCenter.x)) {
-      _alert('请检查参数[mapCenter] 是否正确', '请正确配置地图中心点');
-      return;
-    }
-    if (!utils.map.tools.isNumber(opts.mapMaxZoom)) {
-      _alert('请检查参数[mapMaxZoom] 是否正确', '请正确配置最大缩放级别');
-      return;
-    }
-    if (!utils.map.tools.isNumber(opts.mapMinZoom)) {
-      _alert('请检查参数[mapMinZoom] 是否正确', '请正确配置最小缩放级别');
-      return;
-    }
-
-    var _filter = function () { return true; };
-    this.attrs._opts = utils.map.tools.extend({
-      mapId: undefined,
-      mapCenter: {
-        x: 118.807535,
-        y: 32.113292
-      },
-      mapZoom: 12,
-      mapMaxZoom: 6,
-      mapMinZoom: 16,
-      isEnableDragging: true,
-      isEnableScrollWheelZoom: true,
-      isDisableDbClickZoom: false,
-      isEnableNavigation: true,
-      isEnableOverview: true,
-      isProd: this.attrs._isProd,
-      padding: 0,
-      filter: _filter
-    }, opts);
-    this.attrs._isProd = this.attrs._opts.isProd;
-    this.attrs._opts.filter = utils.map.tools.isFunction(this.attrs._opts.filter) ? this.attrs._opts.filter : _filter;
   }
   /**
    * 根据配置初始化地图
@@ -115,7 +119,7 @@
     }
 
     this.attrs._rdata = new utils.map.RData({});
-    this.attrs._rmanager = new utils.map.RManager(map, {
+    this.attrs._rmanager = new utils.map.RManager(_map, {
       padding: _opts.padding,
       minZoom: _opts.mapMinZoom,
       maxZoom: _opts.mapMaxZoom,

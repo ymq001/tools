@@ -1082,12 +1082,10 @@ export let socket = {
      */
     _checkPropertys: function (opts) {
       if (!(this instanceof utils.socket)) {
-        console.log('请使用该对象时，使用关键字 "new"');
-        return;
+        throw('使用该对象时，使用关键字 "new"');
       }
       if (opts.isReconnect != undefined && !utils.isBoolean(opts.isReconnect)) {
-        console.log('请检查参数[opts.isReconnect]的数据类型是否是boolean类型');
-        return;
+        throw('请检查参数[opts.isReconnect]的数据类型是否是boolean类型');
       }
     }
   }
