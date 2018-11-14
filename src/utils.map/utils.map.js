@@ -1,4 +1,7 @@
 (function (utils) {
+  /**
+   * @class
+   */
   utils.map = utils.map = utils.map || {};
 
   /*** utils.map 代码开始 ***/
@@ -8,6 +11,9 @@
    * 地图常规设置(中心点坐标、最大最小缩放层级)
    * 常规设置(拖拽平移、滚轮缩放、双击放大)
    * 常规控件(缩略图、比例尺、拖拽选取)
+   * 
+   * @method
+   * @static
    * 
    * @property {BMap.Map} _map 百度地图实例
    * @property {utils.map.RData} _rdata 数据处理类实例，如不需要，可以忽略

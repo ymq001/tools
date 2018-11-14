@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Home - Documentation</title>
+    <title>socket - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -33,48 +33,399 @@
 
 <div id="main">
     
+    <h1 class="page-title">socket</h1>
+    
 
     
 
 
 
+
+<section>
+
+<header>
+    
+        <h2>
+        socket
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+    
+
+    <h4 class="name" id="socket"><span class="type-signature"></span>new socket<span class="signature">(opts)</span><span class="type-signature"></span></h4>
+
     
 
 
 
 
+<dl class="details">
 
-
-
-
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_socket.js.html">utils/socket.js</a>, <a href="utils_socket.js.html#line217">line 217</a>
+    </li></ul></dd>
+    
 
     
 
+    
 
-    <section class="readme">
-        <article><h2>源码维护 需执行以下命令,下载源码</h2><ol>
-<li>git clone https://github.com/zhangpeichuan001/baseProject.git</li>
-<li>cd baseProject</li>
-<li>安装node</li>
-<li>安装yarn</li>
-<li>yarn install</li>
-</ol>
-<h2>打包并生成文档</h2><pre class="prettyprint source lang-javascript"><code>yarn lib</code></pre><h2>生成文档</h2><pre class="prettyprint source lang-javascript"><code>yarn doc</code></pre><h2>生成文件说明</h2><p>src 目录下 每个子目录会生成一个打包文件 <strong>如：utils 会生成 utils.js</strong>
-webpack 会自动查找src子目录下的 <strong>index.js</strong>文件 作为入口文件使用</p>
-<h2>以下功能维护</h2><ul>
-<li>[x] utils.tools</li>
-<li>[x] utils.mixin</li>
-<li>[x] utils.cookies</li>
-<li>[x] utils.prototype</li>
-<li>[ ] utils.ajax</li>
-<li>[ ] utils.possmessage</li>
-<li>[ ] utils.socket</li>
-<li>[ ] utils.video</li>
-<li>[x] utils.map</li>
-</ul></article>
-    </section>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
 
 
+
+
+
+<div class="description">
+    <p>初始化websocket</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Json</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>socket初始化相关参数</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>isReconnect</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>是否开启断线重连功能，默认开启 true</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>port</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>可选 websocket通讯地址端口号，默认 6700</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>host</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>websocket 通讯地址 <br /> <span style="color: red;">如参数[host]中不包含协议名称和端口号，程序会自动添加协议名称和端口号</span></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>openHandlers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>websocket通讯打开连接时触发执行的函数(数组)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>messageHandlers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>可选 websocket通讯消息回调时触发执行的函数(数组)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="_port"><span class="type-signature"></span>_port<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_socket.js.html">utils/socket.js</a>, <a href="utils_socket.js.html#line233">line 233</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>标识需要连接的ws地址端口号</p>
+</div>
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

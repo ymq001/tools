@@ -258,7 +258,8 @@
       handler = handler.hashCode;
     } else if (!baidu.lang.isString(handler)) {
       return;
-    } !this.__listeners && (this.__listeners = {});
+    } 
+    !this.__listeners && (this.__listeners = {});
     type.indexOf("on") != 0 && (type = "on" + type);
     var t = this.__listeners;
     if (!t[type]) {

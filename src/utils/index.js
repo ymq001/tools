@@ -3,7 +3,7 @@ import { mixin } from './mixin';
 import { tools } from './tools';
 import { cookies } from './cookies';
 import { protorypes } from './prototype';
-// import { socket } from './socket';
+import { socketLib } from './socket';
 
 /**
  * @class utils
@@ -15,5 +15,7 @@ import { protorypes } from './prototype';
  * @mixes tools
  * @mixes cookies
  */
-export class utils extends mixin(tools, cookies, protorypes) {
+class utils extends mixin(tools, cookies, protorypes, socketLib) {
 }
+
+export { utils };

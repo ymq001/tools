@@ -26,6 +26,7 @@
    * @param {Json} RMarkerOptions.textTheme marker名称主题色
    * @param {String} RMarkerOptions.textTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
    * @param {String} RMarkerOptions.textTheme.color 浏览器可以识别的颜色值，默认白色
+   * @param {Json} RMarkerOptions.attrs 存放自定义属性
    *
    * @example 参考示例1：
    * var map = new BMap.Map("container");
@@ -1026,3 +1027,68 @@
   }
   /*** utils.map.RMarker 代码结束 ***/
 })(window.utils || (window.utils = {}))
+
+
+
+export let socket = {
+
+  socket: {
+    initialize: function (opts) {
+      var _data = {
+        /**
+         * 标识是否断开重连的开关, 默认开启 true
+         * @private
+         * @type {Boolean}
+         */
+        isReconnect: true,
+        /**
+         * 标识是否正在尝试开始重新连接，默认状态 false
+         * @private
+         * @type {Boolean}
+         */
+        _isRestart: false,
+        /**
+         * 标识是否正在尝试重新连接，默认状态 false
+         * @private
+         * @type {Boolean}
+         */
+        _lockReconnect: false,
+        /**
+         * 标识socket实例
+         */
+        _socket: null,
+        /**
+         * 标识需要连接的ws地址
+         */
+        _host: utils.isString(opts.host) ? opts.host : '',
+        /**
+         * 标识该连接已注册的回调事件列表
+         */
+        _handles: {},
+        /**
+         * 标识连接打开时的执行函数
+         */
+        openHandler: utils.isFunction(opts.openHandler) ? opts.openHandler : function () { },
+        messageHandlers: function () { }
+      };
+
+      _data = utils.extend(_data, opts);
+      return new webSocketLib(_data);
+    },
+    /**
+     * 检查参数类型是否使用正确
+     * @param {Json} opts 用户传递的参数
+     * @returns {Boolean}
+     */
+    _checkPropertys: function (opts) {
+      if (!(this instanceof utils.socket)) {
+        console.log('请使用该对象时，使用关键字 "new"');
+        return;
+      }
+      if (opts.isReconnect != undefined && !utils.isBoolean(opts.isReconnect)) {
+        console.log('请检查参数[opts.isReconnect]的数据类型是否是boolean类型');
+        return;
+      }
+    }
+  }
+}
