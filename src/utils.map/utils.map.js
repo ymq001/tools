@@ -13,11 +13,12 @@
    * 常规设置(拖拽平移、滚轮缩放、双击放大)
    * 常规控件(缩略图、比例尺、拖拽选取)
    * 
-   * @property {BMap.Map} _map 百度地图实例
-   * @property {utils.map.RData} _rdata 数据处理类实例，如不需要，可以忽略
-   * @property {utils.map.RManager} _rmanager 覆盖物管理类实例，配合自定义覆盖物使用
-   * @property {Json} _opts 用户自定义设置的属性
-   * @property {Json} _isProd 当前环境是否是开发环境，用于异常的提示方式 <span style="color: red;">默认 true 生产环境</sapn><br /> 
+   * @property {BMap.Map} attrs 用于存放各个实例的属性
+   * @property {BMap.Map} attrs._map 百度地图实例
+   * @property {utils.map.RData} attrs._rdata 数据处理类实例，如不需要，可以忽略
+   * @property {utils.map.RManager} attrs._rmanager 覆盖物管理类实例，配合自定义覆盖物使用
+   * @property {Json} attrs._opts 用户自定义设置的属性
+   * @property {Json} attrs._isProd 当前环境是否是开发环境，用于异常的提示方式 <span style="color: red;">默认 true 生产环境</sapn><br /> 
    * <span style="color: red;"> 开发环境下console打印异常信息</sapn> <br /> 
    * <span style="color: red;"> 生产环境下alert 弹出异常信息</sapn>
    * 

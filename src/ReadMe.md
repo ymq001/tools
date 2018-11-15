@@ -1,8 +1,8 @@
 ## 源码维护 需执行以下命令,下载源码 
 1. git clone https://github.com/zhangpeichuan001/baseProject.git
 2. cd baseProject
-3. 安装node
-4. 安装yarn
+3. 安装node **必须是 v8.9.0 以上版本**
+4. 安装yarn **注意 必须先安装node以后 再安装 yarn**
 5. yarn install
 
 

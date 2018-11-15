@@ -167,15 +167,17 @@
    * @param {Json} opts 用户设置项
    * @param {Array} opts.source 需要预处理的数据源
    * @param {Array} opts.dataLevelZoom 需要预处理的数据项的层级(level)对应的缩放范围
-   * @param {Boolean} opts.isCachedSource 是否需要缓存原始数据，默认为 false 不缓存 <br /> <span style="color: red;">建议：生产环境不缓存以减少内存占用率</span>
-   * @param {Boolean} opts.isFromTree 数据源类型是否是树形数据，默认为 true
-   * @param {Function} opts.convertAttrs 数据预处理时，用作转换数据属性名称使用，默认根据设置添加minZoom、maxZoom属性后原样返回
    * @param {String} opts.childrenKey 数据项子项的属性名称，默认 children
    * @param {String} opts.levelKey 数据项所在层级的属性名称，默认 level
    * @param {String} opts.levelPrefix dataLevelZoom中层级对应的属性前缀，默认 lv
-   * @param {Json} opts.dataLevelZoom 数据所在层级(level)与地图缩放层级映射对象 <br /> <span style="color: red;">固定格式，注意属性名称大小写敏感</span> <br />eg:  { 'lv0': { minZoom: 6, maxZoom: 16} }
+   * @param {Json} opts.dataLevelZoom 数据所在层级(level)与地图缩放层级映射对象 <br /> <span style="color: red;">固定格式，注意属性名称大小写敏感</span> <br /> { 'lv0': { minZoom: 6, maxZoom: 16} }
    * @param {String} opts.attentionKey 标识我的关注标识的key，默认 80001
    * @param {Boolean} opts.isCalcPointToParent 标识是否计算父级节点的基本信息，默认 true <br /> <span style="color: red;"><b>注意</b> 此选项只适用于树结构数据</span>
+   * @param {Boolean} opts.isCachedSource 是否需要缓存原始数据，默认为 false 不缓存 <br /> <span style="color: red;">建议：生产环境不缓存以减少内存占用率</span>
+   * @param {Boolean} opts.isFromTree 数据源类型是否是树形数据，默认为 true
+   * @param {Function} opts.convertAttrs 数据预处理时，用作转换数据属性名称使用
+   * @param {Json} opts.convertAttrs.target 函数参数，转换后的数据对象
+   * @param {Json} opts.convertAttrs.source 函数参数，转换前的元数据对象
    */
   utils.map.RData.prototype.initialize = function (opts) {
     opts = opts || {};
@@ -387,7 +389,7 @@
       filter = function () { return true; }
     }
     for (var i = 0, item; item = this._target[i]; i++) {
-      if (filter(_overlay)) {
+      if (filter(item)) {
         _data.push(item);
       }
     }

@@ -49,10 +49,10 @@ let webpackConfig = {
     // 热替换插件
     new webpack.HotModuleReplacementPlugin(),
     // 将webpack-dev-server在内存中打包的文件输出为本地文件
-    // new WebpackDevServerOutput({
-    //   path: "./dist",
-    //   isDel: true
-    // })
+    new WebpackDevServerOutput({
+      path: "./dist",
+      isDel: true
+    })
   ],
   module: {
     rules: [

@@ -253,13 +253,16 @@
    * 添加marker样式到浏览器上
    */
   utils.map.RMarker.prototype._renderPresetStyles = function () {
-    var style = document.createElement('style');
-    var innerHtml = '.BMap_RMarker{ position: absolute; font-size: 12px; }';
-    innerHtml += '.BMap_RMarker .BMap_RMarker_Icon{ background-repeat: no-repeat; background-size: cover; display: block; margin: 0 auto; }';
-    innerHtml += '.BMap_RMarker .BMap_RMarker_Label{ white-space: nowrap; padding: 3px; margin-top: 5px; position: relative; display: inline-block; box-sizing: border-box; text-align: center; min-width: 100%; border-radius: 50px; background: rgba(41, 41, 41, 0.65); color: #fff; }';
-    innerHtml += '.BMap_RMarker .BMap_RMarker_Badge{ position: absolute; top: -15px; left: 50%; box-sizing: border-box; margin-left: 10px; padding: 0 6px; height: 20px; line-height: 20px; min-width: 20px; text-align: center; z-index: 100; border-radius: 50px; background: rgba(41, 41, 41, 0.65); color: #fff; }';
-    style.innerHTML = innerHtml;
-    document.getElementsByTagName('head')[0].appendChild(style);
+    if(!document.getElementById('BMarker_Style')){
+      var style = document.createElement('style');
+      var innerHtml = '.BMap_RMarker{ position: absolute; font-size: 12px; }';
+      innerHtml += '.BMap_RMarker .BMap_RMarker_Icon{ background-repeat: no-repeat; background-size: cover; display: block; margin: 0 auto; }';
+      innerHtml += '.BMap_RMarker .BMap_RMarker_Label{ white-space: nowrap; padding: 3px; margin-top: 5px; position: relative; display: inline-block; box-sizing: border-box; text-align: center; min-width: 100%; border-radius: 50px; background: rgba(41, 41, 41, 0.65); color: #fff; }';
+      innerHtml += '.BMap_RMarker .BMap_RMarker_Badge{ position: absolute; top: -15px; left: 50%; box-sizing: border-box; margin-left: 10px; padding: 0 6px; height: 20px; line-height: 20px; min-width: 20px; text-align: center; z-index: 100; border-radius: 50px; background: rgba(41, 41, 41, 0.65); color: #fff; }';
+      style.innerHTML = innerHtml;
+      style.id = 'BMarker_Style';
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
   }
 
   /**
@@ -271,25 +274,25 @@
    * @return {Dom} 返回自定义生成的dom节点
    */
   utils.map.RMarker.prototype.initialize = function (map) {
-    var me = this,
-      div = me._container = document.createElement("div");
-    me._map = map;
+    var _this = this,
+      div = _this._container = document.createElement("div");
+    _this._map = map;
     utils.map.tools.extend(div.style, {
       position: "absolute",
-      zIndex: BMap.Overlay.getZIndex(me._position.lat),
+      zIndex: BMap.Overlay.getZIndex(_this._position.lat),
       background: "#FFF",
       cursor: "pointer"
     });
     map.getPanes().labelPane.appendChild(div);
 
     // 给marker添加自定义样式
-    me._renderPresetStyles();
+    _this._renderPresetStyles();
     // 给主容器添加上用户自定义的内容
-    me._appendContent();
+    _this._appendContent();
     // 给主容器添加事件处理
-    me._setEventDispath();
+    _this._setEventDispath();
     // 获取主容器的高宽
-    me._getContainerSize();
+    _this._getContainerSize();
 
     return div;
   }
