@@ -72,21 +72,23 @@
       window.myPoints = [];
       for (var i = 0, item; item = mm[i]; i++) {
         myPoints.push(item.point);
-        myRMarkers.push(new utils.map.RMarker(item.point, {
-          url: 'images/yunweiban.png',
-          size: new BMap.Size(50, 40)
-        }, {
-            "anchor": new BMap.Size(-47, -116),
-            "enableDragging": true,
-            text: item.text,
-            count: i,
-            isShowCount: true,
-            attrs: {
-              rcuId: 123,
-              minZoom: item.minZoom,
-              maxZoom: item.maxZoom
-            }
-          }));
+        myRMarkers.push(new utils.map.RMarker({
+          position: item.point,
+          content: {
+            url: 'images/yunweiban.png',
+            size: new BMap.Size(50, 40)
+          },
+          anchor: new BMap.Size(-47, -116),
+          enableDragging: true,
+          text: item.text,
+          count: i,
+          isShowCount: true,
+          attrs: {
+            rcuId: 123,
+            minZoom: item.minZoom,
+            maxZoom: item.maxZoom
+          }
+        }));
       }
       var item1 = {
         point: new BMap.Point(116.39816, 32.814969),
@@ -95,21 +97,23 @@
         maxZoom: 18
       };
       myPoints.push(item1.point);
-      var myRMarker1 = new utils.map.RMarker(item1.point, {
-        url: 'images/yunweiban.png',
-        size: new BMap.Size(50, 40)
-      }, {
-          "anchor": new BMap.Size(-47, -116),
-          "enableDragging": true,
-          text: item1.text,
-          count: i,
-          isShowCount: true,
-          attrs: {
-            rcuId: 123,
-            minZoom: item1.minZoom,
-            maxZoom: item1.maxZoom
-          }
+      var myRMarker1 = new utils.map.RMarker({
+        position: item1.point,
+        content: {
+          url: 'images/yunweiban.png',
+          size: new BMap.Size(50, 40)
+        },
+        anchor: new BMap.Size(-47, -116),
+        enableDragging: true,
+        text: item1.text,
+        count: i,
+        isShowCount: true,
+        attrs: {
+          rcuId: 123,
+          minZoom: item1.minZoom,
+          maxZoom: item1.maxZoom
         }
+      }
       );
       myRMarker1.on('click', function (e) {
         console.log(e);

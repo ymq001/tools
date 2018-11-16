@@ -23,7 +23,7 @@
   <div style="width:100%;height:100%;border:1px solid gray;margin:10px 0 0 10px;" id="container"></div>
   <script>
     $(function(){
-      var _map = utils.map.initialize({
+      _map = utils.map.initialize({
         mapId: 'container',
         mapCenter: new BMap.Point(118.951767, 31.379918),
         mapZoom: 14,
@@ -32,6 +32,11 @@
       });
       $.post('rculist.json', function(json){
         console.log(json)
+        _map._rdata.initialize({
+          source: json,
+          isFromTree: false,
+          isCalcPointToParent: false
+        })
       }, 'json');
     });
   </script>

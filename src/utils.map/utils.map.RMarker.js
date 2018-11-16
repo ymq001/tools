@@ -6,13 +6,14 @@
    * @class
    * @alias utils.map.RMarker
    * @classdesc utils.map.RMarker
-   * @description 自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/rmarker.html|RMarker示例} {@link http://172.26.1.40/docs/examples/batchMarker.html|RMarker多点示例}
+   * @description 自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/rmarker.html|RMarker示例}
    * 
    * @constructor
    * @param {BMap.Point} opts.position marker的位置
    * @param {Json|String|HTMLElement} opts.content 自定义marker内容，可以是Json对象( eg: {url: {String}, size: {BMap.Size}} )，可以是字符串，也可以是dom节点
    * @param {String} opts.content.url marker背景图标链接
    * @param {BMap.Size} opts.content.size marker背景图标大小
+   * @param {Number} opts.zIndex 可选 设置Marker的dom层级 默认以添加顺序设置层级
    * @param {BMap.Size} opts.anchor Marker的的位置偏移值
    * @param {Boolean} opts.enableDragging 是否启用拖拽，默认为false
    * @param {Boolean} opts.isShowText 是否显示marker名称，默认为true
@@ -35,30 +36,37 @@
    *              +     "<img src='http://map.baidu.com/img/logo-map.gif' border='0' />"
    *              + "</div>";
    * var point = new BMap.Point(116.30816, 40.056863);
-   * var myRMarkerObject = new utils.map.RMarker(point, htm, { "anchor": new BMap.Size(-72, -84), "enableDragging": true, });
+   * var myRMarkerObject = new utils.map.RMarker({
+   *  position: point,
+   *  content: htm, 
+   *  anchor: new BMap.Size(-72, -84),
+   *  enableDragging: true
+   * });
    * map.addOverlay(myRMarkerObject);
    * 
    * @example 参考示例2：
    * var map = new BMap.Map("container");
    * map.centerAndZoom(new BMap.Point(116.309965, 40.058333), 17);
    * var point = new BMap.Point(116.30816, 40.056863);
-   * var myRMarkerObject =  new utils.map.RMarker(point, {
-          url: 'images/yunweiban.png',
-          size: new BMap.Size(50, 40)
-        }, {
-          anchor: new BMap.Size(-47, -116),
-          enableDragging: true,
-          text: '耶路撒冷的冷',
-          count: 10,
-          isShowCount: true,
-          attrs: { //自定义属性可以在这里添加
-            rcuId: 123
-          }
-        });
+   * var myRMarkerObject =  new utils.map.RMarker({
+   *  position: point, 
+   *  content:{
+   *    url: 'images/yunweiban.png',
+   *    size: new BMap.Size(50, 40)
+   *  },
+   *  anchor: new BMap.Size(-47, -116),
+   *  enableDragging: true,
+   *  text: '耶路撒冷的冷',
+   *  count: 10,
+   *  isShowCount: true,
+   *  attrs: { //自定义属性可以在这里添加
+   *    rcuId: 123
+   *  }
+   * });
    * map.addOverlay(myRMarkerObject);
    */
-  utils.map.RMarker = function (position, content, opts) {
-    if (!content || !position || !(position instanceof BMap.Point)) {
+  utils.map.RMarker = function (opts, isBatch) {
+    if (!opts.content || !opts.position || !(opts.position instanceof BMap.Point)) {
       return;
     }
 
@@ -70,25 +78,25 @@
     this._map = null;
 
     /**
+     * marker主容器
+     * @private
+     * @type {HTMLElement}
+     */
+    this._container = null;
+
+    /**
      * Marker内容
      * @private
      * @type {String | HTMLElement}
      */
-    this._content = content;
+    this._content = opts.content;
 
     /**
      * marker显示位置
      * @private
      * @type {BMap.Point}
      */
-    this._position = position;
-
-    /**
-     * marker主容器
-     * @private
-     * @type {HTMLElement}
-     */
-    this._container = null;
+    this._position = opts.position;
 
     /**
      * marker主容器的尺寸
@@ -179,19 +187,21 @@
            * @type {Json}
            */
           attrs: {}
-        }), content), opts);
+        }), opts.content), opts);
 
-    if (utils.map.tools.isObject(content) && utils.map.tools.isString(content.url) && content.size instanceof BMap.Size) {
+    this._opts._isBatch = utils.map.tools.isBoolean(isBatch) ? isBatch : false;
+
+    if (utils.map.tools.isObject(opts.content) && utils.map.tools.isString(opts.content.url) && opts.content.size instanceof BMap.Size) {
       this._content = this._preRenderContent({
-        url: content.url,
-        height: content.size.height,
-        width: content.size.width,
+        url: this._opts.content.url,
+        height: this._opts.content.size.height,
+        width: this._opts.content.size.width,
         text: this._opts.text,
         count: this._opts.count,
         isShowText: this._opts.isShowText,
         isShowCount: this._opts.isShowCount,
-        lng: position.lng,
-        lat: position.lat,
+        lng: this._opts.position.lng,
+        lat: this._opts.position.lat,
         textStyle: this._convertThemeToString(this._opts.textTheme),
         countStyle: this._convertThemeToString(this._opts.countTheme)
       });
@@ -200,6 +210,72 @@
 
   // 继承覆盖物类
   utils.map.RMarker.prototype = new BMap.Overlay();
+
+  /**
+   * 初始化，实现自定义覆盖物的initialize方法
+   * 主要生成Marker的主容器，填充自定义的内容，并附加事件
+   * 
+   * @private
+   * @param {BMap} map map实例对象
+   * @return {Dom} 返回自定义生成的dom节点
+   */
+  utils.map.RMarker.prototype.initialize = function (map) {
+    var _this = this,
+      div = _this._container = document.createElement("div");
+    _this._map = map;
+    _this._map._index = _this._opts.zIndex || _this._map._index || 0;
+    utils.map.tools.extend(div.style, {
+      position: "absolute",
+      zIndex: BMap.Overlay.getZIndex(++_this._map._index),
+      cursor: "pointer"
+    });
+    if (_this._opts._isBatch == false) {
+      map.getPanes().labelPane.appendChild(div);
+    }
+
+    // 给marker添加自定义样式
+    _this._renderPresetStyles();
+    // 给主容器添加上用户自定义的内容
+    _this._appendContent();
+    // 给主容器添加事件处理
+    _this._setEventDispath();
+    // 获取主容器的高宽
+    _this._getContainerSize();
+
+    return div;
+  }
+
+  /**
+   * 为自定义的Marker设定显示位置，实现自定义覆盖物的draw方法
+   * 
+   * @private
+   */
+  utils.map.RMarker.prototype.draw = function () {
+    if (this._opts._isBatch == false) {
+      this._draw();
+    }
+  }
+  /**
+   * 为自定义的Marker设定显示位置，实现自定义覆盖物的draw方法
+   * 
+   * @private
+   */
+  utils.map.RMarker.prototype._draw = function () {
+    var map = this._map,
+      anchor = this._opts.anchor,
+      pixel = map.pointToOverlayPixel(this._position);
+    this._container.style.left = pixel.x + anchor.width + "px";
+    this._container.style.top = pixel.y + anchor.height + "px";
+  }
+
+  utils.map.RMarkerCollection = function (opts) {
+    if (utils.map.tools.isArray(opts) == false) {
+
+    }
+    for (var i = 0, _opt; _opt = opts[i]; i++) {
+
+    }
+  }
 
   /**
    * 预渲染content内容
@@ -252,9 +328,9 @@
    * 添加marker样式到浏览器上
    */
   utils.map.RMarker.prototype._renderPresetStyles = function () {
-    if(!document.getElementById('BMarker_Style')){
+    if (!document.getElementById('BMarker_Style')) {
       var style = document.createElement('style');
-      var innerHtml = '.BMap_RMarker{ position: absolute; font-size: 12px; }';
+      var innerHtml = '.BMap_RMarker{ position: relative; font-size: 12px; }';
       innerHtml += '.BMap_RMarker .BMap_RMarker_Icon{ background-repeat: no-repeat; background-size: cover; display: block; margin: 0 auto; }';
       innerHtml += '.BMap_RMarker .BMap_RMarker_Label{ white-space: nowrap; padding: 3px; margin-top: 5px; position: relative; display: inline-block; box-sizing: border-box; text-align: center; min-width: 100%; border-radius: 50px; background: rgba(41, 41, 41, 0.65); color: #fff; }';
       innerHtml += '.BMap_RMarker .BMap_RMarker_Badge{ position: absolute; top: -15px; left: 50%; box-sizing: border-box; margin-left: 10px; padding: 0 6px; height: 20px; line-height: 20px; min-width: 20px; text-align: center; z-index: 100; border-radius: 50px; background: rgba(41, 41, 41, 0.65); color: #fff; }';
@@ -262,51 +338,6 @@
       style.id = 'BMarker_Style';
       document.getElementsByTagName('head')[0].appendChild(style);
     }
-  }
-
-  /**
-   * 初始化，实现自定义覆盖物的initialize方法
-   * 主要生成Marker的主容器，填充自定义的内容，并附加事件
-   * 
-   * @private
-   * @param {BMap} map map实例对象
-   * @return {Dom} 返回自定义生成的dom节点
-   */
-  utils.map.RMarker.prototype.initialize = function (map) {
-    var _this = this,
-      div = _this._container = document.createElement("div");
-    _this._map = map;
-    utils.map.tools.extend(div.style, {
-      position: "absolute",
-      zIndex: BMap.Overlay.getZIndex(_this._position.lat),
-      background: "#FFF",
-      cursor: "pointer"
-    });
-    map.getPanes().labelPane.appendChild(div);
-
-    // 给marker添加自定义样式
-    _this._renderPresetStyles();
-    // 给主容器添加上用户自定义的内容
-    _this._appendContent();
-    // 给主容器添加事件处理
-    _this._setEventDispath();
-    // 获取主容器的高宽
-    _this._getContainerSize();
-
-    return div;
-  }
-
-  /**
-   * 为自定义的Marker设定显示位置，实现自定义覆盖物的draw方法
-   * 
-   * @private
-   */
-  utils.map.RMarker.prototype.draw = function () {
-    var map = this._map,
-      anchor = this._opts.anchor,
-      pixel = map.pointToOverlayPixel(this._position);
-    this._container.style.left = pixel.x + anchor.width + "px";
-    this._container.style.top = pixel.y + anchor.height + "px";
   }
 
   /**
@@ -366,7 +397,7 @@
       return;
     }
     this._position = position;
-    this.draw();
+    this._draw();
   }
 
   /**
@@ -393,7 +424,7 @@
       return;
     }
     this._opts.anchor = anchor;
-    this.draw();
+    this._draw();
   }
 
   /**
@@ -789,7 +820,7 @@
 
       startPosition = position.pixel;
       me._position = me._map.pixelToPoint(new BMap.Pixel(x, y));
-      me.draw();
+      me._draw();
       // 设置拖拽过程中的鼠标手型
       me._setCursor("dragging");
       /**

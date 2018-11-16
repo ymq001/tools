@@ -24,7 +24,6 @@
    * 
    * @param {Json} opts 用户设置项
    * @param {Array} opts.source 需要预处理的数据源
-   * @param {Array} opts.dataLevelZoom 需要预处理的数据项的层级(level)对应的缩放范围
    * @param {String} opts.childrenKey 数据项子项的属性名称，默认 children
    * @param {String} opts.levelKey 数据项所在层级的属性名称，默认 level
    * @param {String} opts.levelPrefix dataLevelZoom中层级对应的属性前缀，默认 lv

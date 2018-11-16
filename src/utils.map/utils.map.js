@@ -44,7 +44,7 @@
   utils.map.initialize = function (opts) {
     opts = opts || {};
 
-    _initialize.call(utils.map);
+    return _initialize.call(utils.map);
 
     function _initialize() {
       this.attrs = {
