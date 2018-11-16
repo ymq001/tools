@@ -28,9 +28,9 @@ let webpackConfig = {
   },
   devtool: 'source-map',
   plugins: [
-    new UglifyJsPlugin({
-      sourceMap: true
-    })
+    // new UglifyJsPlugin({
+    //   sourceMap: true
+    // })
   ],
   module: {
     rules: [

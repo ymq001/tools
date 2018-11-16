@@ -24,7 +24,7 @@
    * 
    * @param {Json} opts
    * @param {String} opts.mapId 必要参数 地图容器Id
-   * @param {Json} opts.mapCenter 必要参数 地图中心点
+   * @param {BMap.Point|Json} opts.mapCenter 必要参数 地图中心点 可以是BMap.Point类型数据，也可以是具有属性x、y的json对象(eg: {x: 116, y:32})
    * @param {Number} opts.mapCenter.x 必要参数 地图中心点经度(lat/x)
    * @param {Number} opts.mapCenter.y 必要参数 地图中心点纬度(lng/y)
    * @param {Number} opts.mapZoom  必要参数 地图初始缩放级别
@@ -45,8 +45,8 @@
     opts = opts || {};
 
     _initialize.call(utils.map);
-    
-    function _initialize(){
+
+    function _initialize() {
       this.attrs = {
         _map: undefined,
         _rdata: undefined,
@@ -58,7 +58,13 @@
         _alert('请检查参数[mapId] 是否正确', '请正确配置地图容器标识');
         return;
       }
-      if (!opts.mapCenter || !utils.map.tools.isNumber(opts.mapCenter.x) || !utils.map.tools.isNumber(opts.mapCenter.x)) {
+      if (opts.mapCenter instanceof BMap.Point) {
+        opts.mapCenter = {
+          x: opts.mapCenter.lng / 1,
+          y: opts.mapCenter.lat / 1
+        };
+      }
+      if (!opts.mapCenter || !utils.map.tools.isNumber(opts.mapCenter.x / 1) || !utils.map.tools.isNumber(opts.mapCenter.y / 1)) {
         _alert('请检查参数[mapCenter] 是否正确', '请正确配置地图中心点');
         return;
       }
@@ -70,7 +76,7 @@
         _alert('请检查参数[mapMinZoom] 是否正确', '请正确配置最小缩放级别');
         return;
       }
-  
+
       var _filter = function () { return true; };
       this.attrs._opts = utils.map.tools.extend({
         mapId: undefined,
@@ -92,8 +98,10 @@
       }, opts);
       this.attrs._isProd = this.attrs._opts.isProd;
       this.attrs._opts.filter = utils.map.tools.isFunction(this.attrs._opts.filter) ? this.attrs._opts.filter : _filter;
-  
+
       this._initializeMap();
+
+      return this.attrs;
     }
   }
   /**

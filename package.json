@@ -12,10 +12,11 @@
     "prod:lib": "cross-env NODE_LIB=production node_modules/.bin/webpack --mode=production --config webpack.umd.config.js",
     "dev": "node_modules/.bin/webpack --mode=development --config webpack.umd.config.js",
     "dev:lib": "cross-env NODE_LIB=production node_modules/.bin/webpack --mode=development --config webpack.umd.config.js",
-    "start": "yarn dev && yarn doc",
+    "lib:dev": "yarn dev && yarn doc",
     "lib": "yarn dev:lib && yarn doc",
     "lib:prod": "yarn prod:lib && yarn doc",
-    "hot": "node_modules/.bin/webpack-dev-server --config webpack.dev.umd.config.js"
+    "hot": "node_modules/.bin/webpack-dev-server --config webpack.dev.umd.config.js",
+    "start": "yarn install && yarn lib"
   },
   "dependencies": {
     "babel-core": "^6.22.1",
@@ -29,8 +30,6 @@
     "jsdoc": "^3.5.5",
     "uglifyjs-webpack-plugin": "^2.0.1",
     "webpack": "^4.23.1",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10",
-    "webpack-dev-server-output": "^0.0.6"
+    "webpack-cli": "^3.1.2"
   }
 }

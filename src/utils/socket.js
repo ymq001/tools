@@ -145,6 +145,7 @@ webSocketLib.prototype = {
   _init: function () {
     var _this = this;
     try {
+      clearTimeout(this.timer); //执行前先清除定时器，防止error和close在某些浏览器下会触发无用断开连接事件的异常
       this._socket = new window.WebSocket(this.host);
 
       this._socket.onopen = function (evt) {
@@ -208,7 +209,6 @@ webSocketLib.prototype = {
   _close: function () {
     this.isReconnect = false;
     this._socket.close();
-    this.isReconnect = true;
   },
   /**
    * 断线重连
@@ -240,7 +240,7 @@ webSocketLib.prototype = {
 
 
 /**
- * socket实例
+ * socket实例  {@link http://172.26.1.40/docs/examples/socket.html|socket示例}
  * @class
  * 
  * @property {WebSocket|null} _socket 标识websocket实例，默认 null
@@ -250,8 +250,10 @@ webSocketLib.prototype = {
  * @param {Boolean} opts.isReconnect 是否开启断线重连功能，默认开启 true
  * @param {String} opts.port 可选 websocket通讯地址端口号，默认 6700
  * @param {String} opts.host websocket 通讯地址 <br /> <span style="color: red;">如参数[host]中不包含协议名称和端口号，程序会自动添加协议名称和端口号</span>
- * @param {Array|Function} opts.openHandlers websocket通讯打开连接时触发执行的函数(数组)
- * @param {Array|Function} opts.messageHandlers 可选 websocket通讯消息回调时触发执行的函数(数组)
+ * @param {Array|Function} opts.openHandlers websocket通讯打开连接时触发执行的函数(数组) <br /> 
+ * <span style="color: red;">如果此参数为数组 则需传递固定格式的对象数组 eg: [{ hashCode: 'open1', fire: function(evt){ console.log(evt); } }]</span>
+ * @param {Array|Function} opts.messageHandlers 可选 websocket通讯消息回调时触发执行的函数(数组) <br /> 
+ * <span style="color: red;">如果此参数为数组 则需传递固定格式的对象数组 eg: [{ hashCode: 'open1', fire: function(evt){ console.log(evt); } }]</span>
  * @param {Boolean} opts.debug 可选 标识是否打印控制台日志 默认 false
  * 
  * @example 参考示例一
@@ -261,9 +263,9 @@ webSocketLib.prototype = {
  *    this.send({ CmdInfo: "RcuInfo", RcuID: -1730721076 })
  *    console.log('open', evt)
  *  },
- *  messageHandlers: function(evt){
+ *  messageHandlers: [{ hashCode: 'message1', fire: function(evt){
  *    console.info(evt);
- *  } 
+ *  }}]
  * })
  * mm.on('close', function(evt){
  *  console.log('close', evt)

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>socket示例</title>
+  <script src="./jquery/jquery-1.12.3.min.js"></script>
+  <script src="../../dist/vendor.js" defer></script>
+  <script src="../../dist/lib/utils.js" defer></script>
+</head>
+
+<body>
+  <h1>请打开开发者工具 查看NetWork页签中的 WS选项卡查看WebSocket通信信息</h1>
+  <h3>CmdInfo:["P7000","RcuInfo","DoorRecord"]</h3>
+  <p>
+    RcuInfo: 变电站数据，包括节点值变化、节点状态变化、节点报警、RCU状态变化
+    <br />
+    DoorRecord：智能门禁记录：包括门状态改变、开门记录信息 <br />
+    TrackRobot：轨道机器人巡检数据，包括：巡检任务状态变化、巡检任务进度汇报、巡检任务结果汇报 <br />
+  </p>
+  <textarea rows="6" cols="100" id="cmdContent">
+  {
+      "CmdInfo": "RcuInfo",
+      "RcuID": "-1730721076"
+  }
+  </textarea>
+  <br />
+  <button id="sendMsg">发送消息</button>
+  <button id="close">断开重连测试</button>
+  <button id="error">连接异常测试</button>
+  <button id="refresh">恢复正常</button>
+  <div id="msg" style="width:800px;"></div>
+  <script>
+    $(function () {
+      var htmlIndex = 0;
+      var $msg = $('#msg');
+      var $text = $('#cmdContent');
+      var $send = $('#sendMsg');
+      var $close = $('#close');
+      var $error = $('#error');
+      var $refresh = $('#refresh');
+
+      var socket = connect('172.26.1.233');
+
+      $send.click(function () {
+        var msg = getMsg();
+        if (msg) {
+          $msg.prepend(htmlIndex++ + '  主动向服务器发送消息' + '<br />');
+          socket.send(msg);
+        }
+      });
+      $close.click(function () {
+        socket.close();
+      });
+      $error.click(function () {
+        socket && socket.close && socket.close();
+        socket = connect('172.26.1.255');
+      });
+      $refresh.click(function () {
+        socket = connect('172.26.1.233');
+      });
+
+      function getMsg() {
+        try {
+          return JSON.parse($('#cmdContent').val());
+        } catch (error) {
+          $msg.prepend(htmlIndex++ + '消息体格式错误' + '<br />');
+          return false;
+        }
+      }
+
+      function connect(host) {
+        var socket = new utils.socket({
+          host: host, //此处如果不包含协议名称(ws)和端口号(默认为6700)，程序会自动添加协议名称和端口号
+          openHandlers: function (evt) {
+            var msg = getMsg();
+            if (msg) {
+              this.send({ CmdInfo: "RcuInfo", RcuID: -1730721076 })
+              $msg.prepend(htmlIndex++ + '  触发连接打开回调' + '<br />');
+              console.log('open', evt)
+            }
+          },
+          messageHandlers: [{
+            hashCode: 'message1', fire: function (data, evt) {
+              $msg.prepend(htmlIndex++ + '  触发连接回调回调' + JSON.stringify(data) + '<br />');
+              console.info(data, evt);
+            }
+          }]
+        })
+        socket.on('close', function (evt) {
+          $msg.prepend(htmlIndex++ + '  触发连接关闭回调' + '<br />');
+          console.log('close', evt)
+        })
+        socket.on('error', function (evt) {
+          $msg.prepend(htmlIndex++ + '  触发连接错误回调' + '<br />');
+          console.log('error', evt)
+        })
+        return socket;
+      }
+    });
+  </script>
+</body>
+
+</html>
