@@ -22,7 +22,7 @@
 <body>
   <div style="width:100%;height:100%;border:1px solid gray;margin:10px 0 0 10px;" id="container"></div>
   <script>
-    $(function(){
+    $(function () {
       _map = utils.map.initialize({
         mapId: 'container',
         mapCenter: new BMap.Point(118.951767, 31.379918),
@@ -30,118 +30,99 @@
         mapMaxZoom: 16,
         mapMinZoom: 6
       });
-      $.post('rculist.json', function(json){
-        console.log(json)
+      map = _map._map;
+      $.post('rculist.json', function (json) {
+        //console.log(json)
         _map._rdata.initialize({
           source: json,
+          dataLevelZoom: { 'lv0': { minZoom: 6, maxZoom: 16 } },
           isFromTree: false,
-          isCalcPointToParent: false
+          isCalcPointToParent: false,
+          convertAttrs: function (target, source) {
+            target.position = new BMap.Point(target.x, target.y);
+            target.content = {
+              url: 'images/yunweiban.png',
+              size: new BMap.Size(50, 40)
+            };
+            target.enableDragging = false;
+            target.attrs = source;
+          }
+        });
+
+        console.time('addOverlays');
+        window.myRMarker1 = new utils.map.RMarkerCollection(_map._rdata.getDatas());
+        //map.addOverlay(myRMarker1);
+        _map._rmanager.addOverlays(myRMarker1.getOverlays());
+        console.log(myRMarker1)
+        console.log('addOverlays', json.length)
+        console.timeEnd('addOverlays');
+
+        myRMarker1.on('click', function (e) {
+          console.log('click', e);
+          //map.centerAndZoom(e.target._position, 11);
+        })
+        myRMarker1.on('rightclick', function (e) {
+          console.log('rightclick', e);
+          //map.centerAndZoom(e.target._position, 11);
         })
       }, 'json');
+
+      // window.myRMarker1 = new utils.map.RMarkerCollection([{
+      //   position: new BMap.Point(116.402922, 39.99908),
+      //   content: {
+      //     url: 'images/yunweiban.png',
+      //     size: new BMap.Size(50, 40)
+      //   },
+      //   anchor: new BMap.Size(-47, -116),
+      //   enableDragging: false,
+      //   text: '耶路撒冷的冷',
+      //   count: 10,
+      //   isShowCount: true,
+      //   attrs: {
+      //     rcuId: 123
+      //   }
+      // }, {
+      //   position: new BMap.Point(116.602922, 39.99908),
+      //   content: {
+      //     url: 'images/yunweiban.png',
+      //     size: new BMap.Size(50, 40)
+      //   },
+      //   anchor: new BMap.Size(-47, -116),
+      //   enableDragging: false,
+      //   text: '耶路撒冷的冷',
+      //   count: 10,
+      //   isShowCount: true,
+      //   attrs: {
+      //     rcuId: 123
+      //   }
+      // }]);
+      // map.addOverlay(myRMarker1);
+      // map.centerAndZoom(new BMap.Point(116.602922, 39.99908), 12);
+      // myRMarker1.on('mousedown', function (e) {
+      //   console.log('mousedown', e);
+      //   //map.centerAndZoom(e.target._position, 11);
+      // })
+      // myRMarker1.on('mouseup', function (e) {
+      //   console.log('mouseup', e);
+      //   //map.centerAndZoom(e.target._position, 11);
+      // })
+      // myRMarker1.on('mouseover', function (e) {
+      //   console.log('mouseover', e);
+      //   //map.centerAndZoom(e.target._position, 11);
+      // })
+      // myRMarker1.on('mouseout', function (e) {
+      //   console.log('mouseout', e);
+      //   //map.centerAndZoom(e.target._position, 11);
+      // })
+      // myRMarker1.on('dragstart', function (e) {
+      //   console.log('dragstart', e);
+      //   //map.centerAndZoom(e.target._position, 11);
+      // })
+      // myRMarker1.on('dragend', function (e) {
+      //   console.log('dragend', e);
+      //   //map.centerAndZoom(e.target._position, 11);
+      // })
     });
-  </script>
-
-
-  <script type="text/javascript">
-    // window.onload = function () {
-    //   map = new BMap.Map("container", { minZoom: 4, maxZoom: 16, enableMapClick: false });
-    //   map.centerAndZoom(new BMap.Point(116.452545, 32.364017), 8);
-    //   map.enableScrollWheelZoom();
-    //   var top_left_control = new BMap.ScaleControl({ anchor: BMAP_ANCHOR_TOP_LEFT });// 左上角，添加比例尺
-    //   var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
-    //   map.addControl(top_left_control);
-    //   map.addControl(top_left_navigation);
-
-    //   var mm = [
-    //     {
-    //       point: new BMap.Point(116.30816, 32.714969),
-    //       text: '啊是15-18大家',
-    //       minZoom: 15,
-    //       maxZoom: 18
-    //     },
-    //     {
-    //       point: new BMap.Point(116.30816, 32.814969),
-    //       text: '啊是10-12大家',
-    //       minZoom: 10,
-    //       maxZoom: 12
-    //     },
-    //     {
-    //       point: new BMap.Point(116.30816, 32.814969),
-    //       text: '啊是13-14大家',
-    //       minZoom: 13,
-    //       maxZoom: 14
-    //     },
-    //     {
-    //       point: new BMap.Point(116.30816, 32.674969),
-    //       text: '啊是5-9大家',
-    //       minZoom: 5,
-    //       maxZoom: 9
-    //     },
-    //     {
-    //       point: new BMap.Point(116.30816, 32.73969),
-    //       text: '啊是2-4大家',
-    //       minZoom: 2,
-    //       maxZoom: 4
-    //     },
-    //     {
-    //       point: new BMap.Point(116.30816, 32.032704),
-    //       text: '啊是0-12大家',
-    //       minZoom: 0,
-    //       maxZoom: 12
-    //     }
-    //   ]
-    //   window.myRMarkers = [];
-    //   window.myPoints = [];
-    //   for (var i = 0, item; item = mm[i]; i++) {
-    //     myPoints.push(item.point);
-    //     myRMarkers.push(new utils.map.RMarker(item.point, {
-    //       url: 'images/yunweiban.png',
-    //       size: new BMap.Size(50, 40)
-    //     }, {
-    //         "anchor": new BMap.Size(-47, -116),
-    //         "enableDragging": true,
-    //         text: item.text,
-    //         count: i,
-    //         isShowCount: true,
-    //         attrs: {
-    //           rcuId: 123,
-    //           minZoom: item.minZoom,
-    //           maxZoom: item.maxZoom
-    //         }
-    //       }));
-    //   }
-    //   var item1 = {
-    //     point: new BMap.Point(116.39816, 32.814969),
-    //     text: '点击',
-    //     minZoom: 0,
-    //     maxZoom: 18
-    //   };
-    //   myPoints.push(item1.point);
-    //   var myRMarker1 = new utils.map.RMarker(item1.point, {
-    //     url: 'images/yunweiban.png',
-    //     size: new BMap.Size(50, 40)
-    //   }, {
-    //       "anchor": new BMap.Size(-47, -116),
-    //       "enableDragging": true,
-    //       text: item1.text,
-    //       count: i,
-    //       isShowCount: true,
-    //       attrs: {
-    //         rcuId: 123,
-    //         minZoom: item1.minZoom,
-    //         maxZoom: item1.maxZoom
-    //       }
-    //     }
-    //   );
-    //   myRMarker1.on('click', function (e) {
-    //     console.log(e);
-    //     map.centerAndZoom(e.target._position, 11);
-    //   })
-    //   myRMarkers.push(myRMarker1);
-    //   window.rmanager = new utils.map.RManager(map);
-    //   rmanager.addOverlays(myRMarkers);
-    //   map.setViewport(myPoints)
-    // }
   </script>
 </body>
 

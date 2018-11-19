@@ -32,9 +32,23 @@
    * @param {Boolean} opts.isCalcPointToParent 标识是否计算父级节点的基本信息，默认 true <br /> <span style="color: red;"><b>注意</b> 此选项只适用于树结构数据</span>
    * @param {Boolean} opts.isCachedSource 是否需要缓存原始数据，默认为 false 不缓存 <br /> <span style="color: red;">建议：生产环境不缓存以减少内存占用率</span>
    * @param {Boolean} opts.isFromTree 数据源类型是否是树形数据，默认为 true
-   * @param {Function} opts.convertAttrs 数据预处理时，用作转换数据属性名称使用
-   * @param {Json} opts.convertAttrs.target 函数参数，转换后的数据对象
-   * @param {Json} opts.convertAttrs.source 函数参数，转换前的元数据对象
+   * @param {Function} opts.convertAttrs 数据预处理时，用作转换数据属性名称使用 <br />
+   * target convertAttrs函数参数，转换后的数据对象 <br />
+   * source convertAttrs函数参数，转换前的元数据对象 <br />
+   * <span style="color:red;">target对象属性</span> <br />
+   * { <br />
+   *    id: '',   //必要 <br />
+   *    name: '', //必要 <br />
+   *    pid: '',  //必要 <br />
+   *    x: x,     //必要 <br />
+   *    y: y,     //必要 <br />
+   *    isMyAttention: false, //非必要 <br />
+   *    level: 0, //非必要 <br />
+   *    minZoom: 6, //必要 <br />
+   *    maxZoom: 16,//必要 <br />
+   *    attrs: {  //自定义属性，非必要 <br />
+   *    } <br />
+   * } <br />
    * 
    * @example 参考示例一 (树结构数据)
    * var data = [{"id":"1164840296","text":"国网南京供电公司","pid":"0","children":[{"id":"-1652725488","text":"测试","pid":"1164840296","tag":{"d_MapX":0,"d_MapY":0},"children":[{"id":"1906114314","text":"110kV青浦变电站","pid":"-1652725488","tag":{"d_MapX":0,"d_MapY":0},"children":[],"level":2},{"id":"-737077743","text":"110kV沙沟变电站","pid":"-1652725488","tag":{"d_MapX":0,"d_MapY":0},"children":[],"level":2},{"id":"1108277860","text":"169","pid":"-1652725488","tag":{"d_MapX":118.881317,"d_MapY":31.941127},"children":[],"level":2},{"id":"-621562843","text":"28","pid":"-1652725488","tag":{"d_MapX":0,"d_MapY":0},"children":[],"level":2},{"id":"293957994","text":"35kV唐洋变电站","pid":"-1652725488","tag":{"d_MapX":0,"d_MapY":0},"children":[],"level":2}],"level":0}]}];
@@ -174,9 +188,23 @@
    * @param {Boolean} opts.isCalcPointToParent 标识是否计算父级节点的基本信息，默认 true <br /> <span style="color: red;"><b>注意</b> 此选项只适用于树结构数据</span>
    * @param {Boolean} opts.isCachedSource 是否需要缓存原始数据，默认为 false 不缓存 <br /> <span style="color: red;">建议：生产环境不缓存以减少内存占用率</span>
    * @param {Boolean} opts.isFromTree 数据源类型是否是树形数据，默认为 true
-   * @param {Function} opts.convertAttrs 数据预处理时，用作转换数据属性名称使用
-   * @param {Json} opts.convertAttrs.target 函数参数，转换后的数据对象
-   * @param {Json} opts.convertAttrs.source 函数参数，转换前的元数据对象
+   * @param {Function} opts.convertAttrs 数据预处理时，用作转换数据属性名称使用 <br />
+   * target convertAttrs函数参数，转换后的数据对象 <br />
+   * source convertAttrs函数参数，转换前的元数据对象 <br />
+   * <span style="color:red;">target对象属性</span> <br />
+   * { <br />
+   *    id: '',   //必要 <br />
+   *    name: '', //必要 <br />
+   *    pid: '',  //必要 <br />
+   *    x: x,     //必要 <br />
+   *    y: y,     //必要 <br />
+   *    isMyAttention: false, //非必要 <br />
+   *    level: 0, //非必要 <br />
+   *    minZoom: 6, //必要 <br />
+   *    maxZoom: 16,//必要 <br />
+   *    attrs: {  //自定义属性，非必要 <br />
+   *    } <br />
+   * } <br />
    */
   utils.map.RData.prototype.initialize = function (opts) {
     opts = opts || {};
@@ -217,6 +245,7 @@
   /**
    * 转换固定属性(maxZoom、minZoom)
    * 计算数据最大层级
+   * @private
    * @param {Json} data 需要转换属性的元数据
    * @return {Json} 添加了maxZoom、minZoom、level的数据对象
    */

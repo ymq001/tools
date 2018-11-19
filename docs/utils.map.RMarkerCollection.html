@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>socket - Documentation</title>
+    <title>RMarkerCollection - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -33,7 +33,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">socket</h1>
+    <h1 class="page-title">RMarkerCollection</h1>
     
 
     
@@ -46,8 +46,12 @@
 <header>
     
         <h2>
-        socket
+            <span class="ancestors"><a href="utils.html">utils</a><a href="utils.map.html">.map</a>.</span>
+        
+        RMarkerCollection
         </h2>
+        
+            <div class="class-description"><p>utils.map.RMarkerCollection</p></div>
         
     
 </header>
@@ -59,8 +63,10 @@
             
 
     
+    <h2>Constructor</h2>
+    
 
-    <h4 class="name" id="socket"><span class="type-signature"></span>new socket<span class="signature">(opts)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RMarkerCollection"><span class="type-signature"></span>new RMarkerCollection<span class="signature">(opts)</span><span class="type-signature"></span></h4>
 
     
 
@@ -72,7 +78,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_socket.js.html">utils/socket.js</a>, <a href="utils_socket.js.html#line277">line 277</a>
+        <a href="utils.map_utils.map.RMarker.js.html">utils.map/utils.map.RMarker.js</a>, <a href="utils.map_utils.map.RMarker.js.html#line1126">line 1126</a>
     </li></ul></dd>
     
 
@@ -135,16 +141,13 @@
 
         <tr>
             
-                <td class="name"><code>_socket</code></td>
+                <td class="name"><code>_map</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">WebSocket</span>
-|
-
-<span class="param-type">null</span>
+<span class="param-type">BMap.Map</span>
 
 
             
@@ -154,20 +157,20 @@
 
             
 
-            <td class="description last"><p>标识websocket实例，默认 null</p></td>
+            <td class="description last"><p>百度地图实例</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>_api</code></td>
+                <td class="name"><code>_container</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">socketLib</span>
+<span class="param-type">HTMLElement</span>
 
 
             
@@ -177,7 +180,30 @@
 
             
 
-            <td class="description last"><p>标识socketlib实例</p></td>
+            <td class="description last"><p>marker主容器</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>_overlays</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">RMarker</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>将参数数组解析成RMarker后的覆盖物列表</p></td>
         </tr>
 
     
@@ -190,7 +216,8 @@
 
 
 <div class="description">
-    <p>socket实例  <a href="http://172.26.1.40/docs/examples/socket.html">socket示例</a></p>
+    <p>批量创建自定义复杂覆盖物类，实现丰富的Marker展现效果。 <a href="http://172.26.1.40/docs/examples/batchMarker.html">RMarkerCollection示例</a> <br />
+<span style="color:red;"><b>注意：</b> 暂时只支持RMarker类型的覆盖物</span></p>
 </div>
 
 
@@ -199,11 +226,6 @@
 
 
 
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>参考示例一mm = new utils.socket({ host: '172.26.1.233', openHandlers: function(evt){   this.send({ CmdInfo: "RcuInfo", RcuID: -1730721076 })   console.log('open', evt) }, messageHandlers: [{ hashCode: 'message1', fire: function(evt){   console.info(evt); }}]})mm.on('close', function(evt){ console.log('close', evt)})mm.on('error', function(evt){ console.log('error', evt)})</code></pre>
 
 
 
@@ -239,7 +261,7 @@
             <td class="type">
             
                 
-<span class="param-type">Json</span>
+<span class="param-type">Array.&lt;RMarker></span>
 
 
             
@@ -249,7 +271,7 @@
 
             
 
-            <td class="description last"><p>socket初始化相关参数</p>
+            <td class="description last"><p>Rmarker中的参数数组</p>
                 <h6>Properties</h6>
                 
 
@@ -275,13 +297,13 @@
 
         <tr>
             
-                <td class="name"><code>isReconnect</code></td>
+                <td class="name"><code>position</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type">BMap.Point</span>
 
 
             
@@ -291,14 +313,62 @@
 
             
 
-            <td class="description last"><p>是否开启断线重连功能，默认开启 true</p></td>
+            <td class="description last"><p>marker的位置</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>port</code></td>
+                <td class="name"><code>content</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Json</span>
+|
+
+<span class="param-type">String</span>
+|
+
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>自定义marker内容，可以是Json对象( eg: {url: {String}, size: {BMap.Size}} )，可以是字符串，也可以是dom节点</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
             
 
             <td class="type">
@@ -314,20 +384,20 @@
 
             
 
-            <td class="description last"><p>可选 websocket通讯地址端口号，默认 6700</p></td>
+            <td class="description last"><p>marker背景图标链接</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>host</code></td>
+                <td class="name"><code>size</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">BMap.Size</span>
 
 
             
@@ -337,23 +407,27 @@
 
             
 
-            <td class="description last"><p>websocket 通讯地址 <br /> <span style="color: red;">如参数[host]中不包含协议名称和端口号，程序会自动添加协议名称和端口号</span></p></td>
+            <td class="description last"><p>marker背景图标大小</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>openHandlers</code></td>
+                <td class="name"><code>zIndex</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array</span>
-|
-
-<span class="param-type">function</span>
+<span class="param-type">Number</span>
 
 
             
@@ -363,24 +437,20 @@
 
             
 
-            <td class="description last"><p>websocket通讯打开连接时触发执行的函数(数组) <br /> 
-<span style="color: red;">如果此参数为数组 则需传递固定格式的对象数组 eg: [{ hashCode: 'open1', fire: function(evt){ console.log(evt); } }]</span></p></td>
+            <td class="description last"><p>可选 设置Marker的dom层级 默认以添加顺序设置层级</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>messageHandlers</code></td>
+                <td class="name"><code>anchor</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array</span>
-|
-
-<span class="param-type">function</span>
+<span class="param-type">BMap.Size</span>
 
 
             
@@ -390,15 +460,14 @@
 
             
 
-            <td class="description last"><p>可选 websocket通讯消息回调时触发执行的函数(数组) <br /> 
-<span style="color: red;">如果此参数为数组 则需传递固定格式的对象数组 eg: [{ hashCode: 'open1', fire: function(evt){ console.log(evt); } }]</span></p></td>
+            <td class="description last"><p>Marker的的位置偏移值</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>debug</code></td>
+                <td class="name"><code>enableDragging</code></td>
             
 
             <td class="type">
@@ -414,7 +483,312 @@
 
             
 
-            <td class="description last"><p>可选 标识是否打印控制台日志 默认 false</p></td>
+            <td class="description last"><p>是否启用拖拽，默认为false</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isShowText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>是否显示marker名称，默认为true</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isShowCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>是否显示marker角标，默认为false</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>count</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>marker角标，可以是数字，也可以是文本</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>marker名称</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>countTheme</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Json</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>角标主题色</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bgColor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>浏览器可以识别的颜色值，默认半透明黑色</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>浏览器可以识别的颜色值，默认白色</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>textTheme</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Json</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>marker名称主题色</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bgColor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>浏览器可以识别的颜色值，默认半透明黑色</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>浏览器可以识别的颜色值，默认白色</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>attrs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Json</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>存放自定义属性</p></td>
         </tr>
 
     
@@ -448,6 +822,17 @@
     
 
     
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>RMarker</li>
+    </ul>
+
+
+    
 
     
 
@@ -467,7 +852,7 @@
 
     
 
-    <h4 class="name" id="send"><span class="type-signature"></span>send<span class="signature">(data)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getOverlays"><span class="type-signature"></span>getOverlays<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -479,7 +864,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_socket.js.html">utils/socket.js</a>, <a href="utils_socket.js.html#line344">line 344</a>
+        <a href="utils.map_utils.map.RMarker.js.html">utils.map/utils.map.RMarker.js</a>, <a href="utils.map_utils.map.RMarker.js.html#line1156">line 1156</a>
     </li></ul></dd>
     
 
@@ -519,143 +904,7 @@
 
 
 <div class="description">
-    <p>发送消息给服务器</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-|
-
-<span class="param-type">Json</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>向服务器发送的消息</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="close"><span class="type-signature"></span>close<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_socket.js.html">utils/socket.js</a>, <a href="utils_socket.js.html#line357">line 357</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>关闭连接</p>
+    <p>获取覆盖物列表</p>
 </div>
 
 
@@ -699,7 +948,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_socket.js.html">utils/socket.js</a>, <a href="utils_socket.js.html#line386">line 386</a>
+        <a href="utils.map_utils.map.RMarker.js.html">utils.map/utils.map.RMarker.js</a>, <a href="utils.map_utils.map.RMarker.js.html#line1172">line 1172</a>
     </li></ul></dd>
     
 
@@ -739,8 +988,7 @@
 
 
 <div class="description">
-    <p>注册对象的事件监听器 <br />
-<span style="color: red;">注意： onopen 事件注册后会立即调用</span></p>
+    <p>注册对象的事件监听器</p>
 </div>
 
 
@@ -753,7 +1001,7 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>参考示例一socket = new utils.socket({ host: '172.26.1.233', openHandlers: function(evt){   this.send({ CmdInfo: "RcuInfo", RcuID: -1730721076 })   console.log('open', evt) }, messageHandlers: function(evt){   console.info(evt); } })socket.on('close', function(evt){ console.log('close', evt)})socket.on('error', function(evt){ console.log('error', evt)})</code></pre>
+    <pre class="prettyprint"><code>参考示例：myRMarkerObject.on("ondragend", function(e) {     alert(e.type);  });</code></pre>
 
 
 
@@ -789,7 +1037,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -799,7 +1047,7 @@
 
             
 
-            <td class="description last"><p>事件类型 可选值：onopen / onmessage / onerror / onclose</p></td>
+            <td class="description last"><p>自定义事件的名称 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart</p></td>
         </tr>
 
     
@@ -822,7 +1070,7 @@
 
             
 
-            <td class="description last"><p>回调函数</p></td>
+            <td class="description last"><p>自定义事件被触发时应该调用的回调函数</p></td>
         </tr>
 
     
@@ -835,7 +1083,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -845,7 +1093,7 @@
 
             
 
-            <td class="description last"><p>可选 为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。</p></td>
+            <td class="description last"><p>为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。   *</p></td>
         </tr>
 
     
@@ -884,7 +1132,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_socket.js.html">utils/socket.js</a>, <a href="utils_socket.js.html#line415">line 415</a>
+        <a href="utils.map_utils.map.RMarker.js.html">utils.map/utils.map.RMarker.js</a>, <a href="utils.map_utils.map.RMarker.js.html#line1187">line 1187</a>
     </li></ul></dd>
     
 
@@ -924,7 +1172,7 @@
 
 
 <div class="description">
-    <p>注销对象的事件监听器</p>
+    <p>移除对象的事件监听器</p>
 </div>
 
 
@@ -937,7 +1185,7 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>参考示例一socket = new utils.socket({ host: '172.26.1.233', openHandlers: function(evt){   this.send({ CmdInfo: "RcuInfo", RcuID: -1730721076 })   console.log('open', evt) }, messageHandlers: [ hashCode: '', fire: function(evt){   console.info(evt); }]})socket.off('message') //只传递一个参数，会注销此类型下所有事件socket.on('close', function(evt){ console.log('error', evt)})</code></pre>
+    <pre class="prettyprint"><code>参考示例：myRMarkerObject.off("ondragend");</code></pre>
 
 
 
@@ -973,7 +1221,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -983,7 +1231,7 @@
 
             
 
-            <td class="description last"><p>事件类型 可选值：onopen / onmessage / onerror / onclose</p></td>
+            <td class="description last"><p>事件类型 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart</p></td>
         </tr>
 
     
@@ -999,7 +1247,7 @@
 <span class="param-type">function</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -1009,7 +1257,7 @@
 
             
 
-            <td class="description last"><p>需要移除的事件监听函数或监听函数的key</p></td>
+            <td class="description last"><p>要移除的事件监听函数或者监听函数的key</p></td>
         </tr>
 
     

@@ -6,16 +6,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>utils demo</title>
-  <!-- <script src="../../dist/vendor.js" defer></script> -->
-  <!-- <script src="../../dist/lib/utils.js" defer></script> -->
+  <script src="./jquery/jquery-1.12.3.min.js"></script>
+  <script src="../../dist/vendor.js" defer></script>
+  <script src="../../dist/lib/utils.js" defer></script>
   <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
   <!-- <script src="../../src/utils.map/index.js" defer></script> -->
   <script src="../../dist/lib/utils.map.js" defer></script>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
 </head>
 
 <body>
-  <div style="width:700px;height:400px;border:1px solid gray;margin:10px 0 0 10px;" id="container"></div>
-  <script type="text/javascript">
+  <div style="width:100%;height:100%;border:1px solid gray;margin:10px 0 0 10px;" id="container"></div>
+  <script>
+    $(function () {
+      _map = utils.map.initialize({
+        mapId: 'container',
+        mapCenter: new BMap.Point(118.951767, 31.379918),
+        mapZoom: 12,
+        mapMaxZoom: 16,
+        mapMinZoom: 6
+      });
+      map = _map._map;
+      $.post('rculist.json', function (json) {
+        //console.log(json)
+        data = json;
+        _map._rdata.initialize({
+          source: json,
+          dataLevelZoom: { 'lv0': { minZoom: 6, maxZoom: 16 } },
+          isFromTree: false,
+          isCalcPointToParent: false,
+          convertAttrs: function (target, source) {
+            target.position = new BMap.Point(target.x, target.y);
+            target.content = {
+              url: 'images/yunweiban.png',
+              size: new BMap.Size(50, 40)
+            };
+            target.enableDragging = false;
+            target.attrs = source;
+          }
+        });
+
+        console.time('addOverlays');
+        _map._rdata.getDatas().forEach(function (item) {
+          var myRMarker1 = new utils.map.RMarker({
+            position: new BMap.Point(item.x, item.y),
+            content: {
+              url: 'images/yunweiban.png',
+              size: new BMap.Size(50, 40)
+            },
+            enableDragging: true,
+            text: item.name,
+            attrs: item
+          });
+          _map._rmanager.addOverlay(myRMarker1);
+          myRMarker1.addEventListener('click', function (e) {
+            console.log(e)
+          })
+          myRMarker1.addEventListener('dragend', function (e) {
+            console.log('dragend', e)
+          })
+        });
+        _map._rmanager.show();
+        console.log('addOverlays', json.length)
+        console.timeEnd('addOverlays');
+      }, 'json');
+
+    });
+  </script>
+  <!-- <script type="text/javascript">
     window.onload = function () {
       map = new BMap.Map("container");
       map.centerAndZoom(new BMap.Point(116.401952, 40.032704), 12);
@@ -61,13 +125,28 @@
         });
       map.addOverlay(myRMarker2);
       myRMarker2.addEventListener("onmouseover", function (e) {
+        console.log(e)
         document.getElementById("rm3_image").src = "images/yunweiban.png";
       });
       myRMarker2.addEventListener("onmouseout", function (e) {
         document.getElementById("rm3_image").src = "images/back.png";
       });
+      myRMarker1.on('mouseover', function (e) {
+        console.log('mouseover', e);
+        //map.centerAndZoom(e.target._position, 11);
+        myRMarker1.setContent({
+          url: "images/back.png"
+        });
+      })
+      myRMarker1.on('mouseout', function (e) {
+        console.log('mouseout', e);
+        //map.centerAndZoom(e.target._position, 11);
+        myRMarker1.setContent({
+          url: "images/yunweiban.png"
+        });
+      })
     }
-  </script>
+  </script> -->
 </body>
 
 </html>

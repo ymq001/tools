@@ -1,7 +1,7 @@
 (function (utils) {
   utils.map = utils.map = utils.map || {};
-  
-  
+
+
   /*** utils.map.RManager 代码开始 ***/
   /**
    * utils.map.RManager类的构造函数
@@ -135,7 +135,7 @@
   utils.map.RManager.prototype.addOverlaysFromList = function (list, opts) {
     if (list instanceof Array) {
       for (var i = 0, _item, _overlay; _item = list[i]; i++) {
-        var _opts = utils.extend(true, {}, );
+        var _opts = utils.extend(true, {});
         _overlay = new utils.map.RMarker(new BMap.Point(_item.x, _item.y), _item.content, {
           anchor: _item.anchor,
           enableDragging: _item.enableDragging,
@@ -295,29 +295,42 @@
    * @param {Function} filter 可选，过滤覆盖物的函数钩子，必须返回boolean类型的值，默认为RManager的属性_filter
    */
   utils.map.RManager.prototype._toggleOverlays = function (filter) {
+    var _this = this;
     var _zoom = this._map.getZoom();
     var _bounds = this._getRealBounds();
     filter = utils.map.tools.isFunction(filter) ? filter : this._filter;
-    for (var i = 0, _overlay; _overlay = this._overlays[i]; i++) {
-      //判断是否在可视区域内  &&  判断当前缩放级别是否符合覆盖物的缩放级别显示范围
-      if (_bounds.containsPoint(_overlay.getPosition()) && _zoom >= _overlay.attrs.minZoom && _zoom <= _overlay.attrs.maxZoom) {
-        _overlay.attrs._isInViewing = true;
-        if (!_overlay.attrs._isAdded) {
-          this._map.addOverlay(_overlay);
-          _overlay.attrs._isAdded = true;
-          !this._visible && _overlay.hide();
-        } else {
-          if (filter(_overlay)) {
-            this._visible ? _overlay.show() : _overlay.hide();
+    setTimeout(function () {
+      for (var i = 0, _overlay; _overlay = _this._overlays[i]; i++) {
+        _overlay.attrs._isAdded = !!_overlay.attrs._isAdded;
+        //判断是否在可视区域内  &&  判断当前缩放级别是否符合覆盖物的缩放级别显示范围
+        if (_bounds.containsPoint(_overlay.getPosition()) && _zoom >= _overlay.attrs.minZoom && _zoom <= _overlay.attrs.maxZoom) {
+          _overlay.attrs._isInViewing = true;
+          if (!_overlay.attrs._isAdded) {
+            _this._map.addOverlay(_overlay);
+            _overlay.attrs._isAdded = true;
+            !_this._visible && _overlay.hide();
           } else {
-            _overlay.hide();
+            if (filter(_overlay)) {
+              if (_overlay.attrs._isVisible == false && _this._visible == true) {
+                _overlay.show();
+                _overlay.attrs._isVisible == true;
+              } else if (_overlay.attrs._isVisible == true && _this._visible == false) {
+                _overlay.hide();
+                _overlay.attrs._isVisible == false;
+              }
+              //_this._visible ? _overlay.show() : _overlay.hide();
+            } else {
+              _overlay.attrs._isVisible == false;
+              _overlay.hide();
+            }
           }
+        } else if (_overlay.attrs._isAdded) {
+          _overlay.attrs._isInViewing = false;
+          _overlay.attrs._isVisible == false;
+          _overlay.hide();
         }
-      } else if (_overlay.attrs._isAdded) {
-        _overlay.attrs._isInViewing = false;
-        _overlay.hide();
       }
-    }
+    }, 0);
   }
   /**
    * 获取真实的可视区域范围

@@ -9,6 +9,15 @@
    * @description 自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/rmarker.html|RMarker示例}
    * 
    * @constructor
+   * 
+   * @property {BMap.Map} _map 百度地图实例
+   * @property {HTMLElement} _container marker主容器
+   * @property {String|HTMLElement} _content marker解析成HTMLElement后的DOM字符串
+   * @property {BMap.Point} _position marker显示位置
+   * @property {BMap.Size} _size marker主容器的尺寸
+   * @property {Json} _opts 默认参数赋值
+   * 
+   * @param {Json} opts Rmarker中的参数
    * @param {BMap.Point} opts.position marker的位置
    * @param {Json|String|HTMLElement} opts.content 自定义marker内容，可以是Json对象( eg: {url: {String}, size: {BMap.Size}} )，可以是字符串，也可以是dom节点
    * @param {String} opts.content.url marker背景图标链接
@@ -65,7 +74,7 @@
    * });
    * map.addOverlay(myRMarkerObject);
    */
-  utils.map.RMarker = function (opts, isBatch) {
+  utils.map.RMarker = function (opts, index) {
     if (!opts.content || !opts.position || !(opts.position instanceof BMap.Point)) {
       return;
     }
@@ -87,7 +96,7 @@
     /**
      * Marker内容
      * @private
-     * @type {String | HTMLElement}
+     * @type {String}
      */
     this._content = opts.content;
 
@@ -106,6 +115,7 @@
     this._size = null;
 
     opts = opts || {};
+    opts.text = opts.text || opts.name;
     /**
      * _opts是默认参数赋值。
      * 下面通过用户输入的opts，对默认参数赋值
@@ -188,9 +198,7 @@
            */
           attrs: {}
         }), opts.content), opts);
-
-    this._opts._isBatch = utils.map.tools.isBoolean(isBatch) ? isBatch : false;
-
+    if (utils.map.tools.isNumber(index)) this._index = index; //批量添加覆盖物时,用于事件触发查找的索引
     if (utils.map.tools.isObject(opts.content) && utils.map.tools.isString(opts.content.url) && opts.content.size instanceof BMap.Size) {
       this._content = this._preRenderContent({
         url: this._opts.content.url,
@@ -220,25 +228,48 @@
    * @return {Dom} 返回自定义生成的dom节点
    */
   utils.map.RMarker.prototype.initialize = function (map) {
+    var _this = this;
+    var div = this._initialize(map, map.getPanes().labelPane);
+
+    // 给主容器添加事件处理
+    _this._setEventDispath();
+    return div;
+  }
+
+  /**
+   * 初始化，实现自定义覆盖物的initialize方法
+   * 主要生成Marker的主容器，填充自定义的内容，并附加事件
+   * 
+   * @private
+   * @param {BMap} map map实例对象
+   * @param {HTMLElement} container 需要添加到容器
+   * @return {Dom} 返回自定义生成的dom节点
+   */
+  utils.map.RMarker.prototype._initialize = function (map, container) {
     var _this = this,
-      div = _this._container = document.createElement("div");
+      div = _this._container = document.createElement("div"),
+      anchor = this._opts.anchor,
+      pixel = map.pointToOverlayPixel(this._position);
     _this._map = map;
     _this._map._index = _this._opts.zIndex || _this._map._index || 0;
     utils.map.tools.extend(div.style, {
       position: "absolute",
       zIndex: BMap.Overlay.getZIndex(++_this._map._index),
-      cursor: "pointer"
+      cursor: "pointer",
+      left: pixel.x + anchor.width + "px",
+      top: pixel.y + anchor.height + "px"
     });
-    if (_this._opts._isBatch == false) {
-      map.getPanes().labelPane.appendChild(div);
+    if (utils.map.tools.isNumber(_this._index)) {
+      div.setAttribute('BMarkerIndex', _this._index);
     }
+    container.appendChild(div);
 
     // 给marker添加自定义样式
     _this._renderPresetStyles();
     // 给主容器添加上用户自定义的内容
     _this._appendContent();
     // 给主容器添加事件处理
-    _this._setEventDispath();
+    //_this._setEventDispath();
     // 获取主容器的高宽
     _this._getContainerSize();
 
@@ -251,9 +282,7 @@
    * @private
    */
   utils.map.RMarker.prototype.draw = function () {
-    if (this._opts._isBatch == false) {
-      this._draw();
-    }
+    this._draw();
   }
   /**
    * 为自定义的Marker设定显示位置，实现自定义覆盖物的draw方法
@@ -267,20 +296,11 @@
     this._container.style.left = pixel.x + anchor.width + "px";
     this._container.style.top = pixel.y + anchor.height + "px";
   }
-
-  utils.map.RMarkerCollection = function (opts) {
-    if (utils.map.tools.isArray(opts) == false) {
-
-    }
-    for (var i = 0, _opt; _opt = opts[i]; i++) {
-
-    }
-  }
-
   /**
    * 预渲染content内容
    *  1. 若content是一个String or HTMLElement 则直接返回
    *  2. 若content是一个Json对象 则渲染成固定dom结构
+   * @private
    * @param {Json|String|HTMLElement} content 预渲染content内容
    * @param {String} content.url 背景图标链接
    * @param {BMap.Size} content.size 背景图标大小
@@ -308,6 +328,7 @@
   /**
    * 处理样式对象
    *  此后个性化marker设置 需改此处
+   * @private
    * @param {Json} theme 样式对象
    * @param {String} theme.bgColor 背景颜色
    * @param {String} theme.color 文本颜色
@@ -326,6 +347,7 @@
 
   /**
    * 添加marker样式到浏览器上
+   * @private
    */
   utils.map.RMarker.prototype._renderPresetStyles = function () {
     if (!document.getElementById('BMarker_Style')) {
@@ -514,7 +536,6 @@
         textTheme: utils.map.tools.isObject(content.textTheme) ? content.textTheme : this._opts.textTheme,
         countTheme: utils.map.tools.isObject(content.countTheme) ? content.countTheme : this._opts.countTheme
       });
-      console.warn(this._opts);
       this._content = this._preRenderContent({
         url: this._opts.url,
         height: this._opts.size.height,
@@ -849,6 +870,12 @@
     // 鼠标按下事件
     utils.map.tools.on(div, "onmousedown", function (e) {
       var position = _getPositionByEvent(e);
+      if (e.button == 2) {
+        _dispatchEvent(me, "onrightclick", {
+          "point": position.point,
+          "pixel": position.pixel
+        });
+      }
       /**
        * 在Marker上按下鼠标时，派发事件的接口
        * @name RMarker#onmousedown
@@ -1059,4 +1086,108 @@
     return utils.map.tools.preventDefault(e);
   }
   /*** utils.map.RMarker 代码结束 ***/
+
+  /*** utils.map.RMarkerCollection 代码开始 ***/
+  /**
+   * utils.map.RMarkerCollection类的构造函数
+   * @class
+   * @alias utils.map.RMarkerCollection
+   * @classdesc utils.map.RMarkerCollection
+   * @description 批量创建自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/batchMarker.html|RMarkerCollection示例} <br />
+   * <span style="color:red;"><b>注意：</b> 暂时只支持RMarker类型的覆盖物</span>
+   * 
+   * @extends RMarker
+   * @constructor
+   * 
+   * @property {BMap.Map} _map 百度地图实例
+   * @property {HTMLElement} _container marker主容器
+   * @property {RMarker} _overlays 将参数数组解析成RMarker后的覆盖物列表
+   * 
+   * @param {Array<RMarker>} opts Rmarker中的参数数组
+   * @param {BMap.Point} opts.position marker的位置
+   * @param {Json|String|HTMLElement} opts.content 自定义marker内容，可以是Json对象( eg: {url: {String}, size: {BMap.Size}} )，可以是字符串，也可以是dom节点
+   * @param {String} opts.content.url marker背景图标链接
+   * @param {BMap.Size} opts.content.size marker背景图标大小
+   * @param {Number} opts.zIndex 可选 设置Marker的dom层级 默认以添加顺序设置层级
+   * @param {BMap.Size} opts.anchor Marker的的位置偏移值
+   * @param {Boolean} opts.enableDragging 是否启用拖拽，默认为false
+   * @param {Boolean} opts.isShowText 是否显示marker名称，默认为true
+   * @param {Boolean} opts.isShowCount 是否显示marker角标，默认为false
+   * @param {Boolean} opts.count marker角标，可以是数字，也可以是文本
+   * @param {String} opts.text marker名称
+   * @param {Json} opts.countTheme 角标主题色
+   * @param {String} opts.countTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
+   * @param {String} opts.countTheme.color 浏览器可以识别的颜色值，默认白色
+   * @param {Json} opts.textTheme marker名称主题色
+   * @param {String} opts.textTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
+   * @param {String} opts.textTheme.color 浏览器可以识别的颜色值，默认白色
+   * @param {Json} opts.attrs 存放自定义属性
+   */
+  utils.map.RMarkerCollection = function (opts) {
+    /**
+    * map对象
+    * @private
+    * @type {Map}
+    */
+    this._map = null;
+    /**
+     * marker主容器
+     * @private
+     * @type {HTMLElement}
+     */
+    this._container = null;
+    /**
+     * marker列表
+     * @private
+     * @type {utils.map.RMarker}
+     */
+    this._overlays = [];
+
+    if (utils.map.tools.isArray(opts) == false) {
+      throw ('请传递Array类型的参数');
+    }
+    for (var i = 0, _opt; _opt = opts[i]; i++) {
+      this._overlays.push(new utils.map.RMarker(_opt, i));
+    }
+  }
+  /**
+   * 获取覆盖物列表
+   */
+  utils.map.RMarkerCollection.prototype.getOverlays = function () {
+    return this._overlays;
+  }
+  /**
+   * 注册对象的事件监听器
+   * @grammar obj.addEventListener(type, handler[, key])
+   * @param 	{string}   type         自定义事件的名称 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart
+   * @param 	{Function} handler      自定义事件被触发时应该调用的回调函数
+   * @param 	{string}   key		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。   *  
+   * @remark 	事件类型区分大小写。如果自定义事件名称不是以小写"on"开头，该方法会给它加上"on"再进行判断，即"click"和"onclick"会被认为是同一种事件。 
+   * 
+   * @example 参考示例：
+   * myRMarkerObject.on("ondragend", function(e) { 
+   *     alert(e.type);  
+   * });
+   */
+  utils.map.RMarkerCollection.prototype.on = function (type, handler, key) {
+    this._overlays.forEach(function (_overlay) {
+      _overlay.on(type, handler, key);
+    });
+  }
+  /**
+   * 移除对象的事件监听器
+   * @grammar obj.removeEventListener(type, handler)
+   * @param {string}   type     事件类型 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart
+   * @param {Function|string} handler  要移除的事件监听函数或者监听函数的key
+   * @remark 	如果第二个参数handler没有被绑定到对应的自定义事件中，什么也不做。
+   * 
+   * @example 参考示例：
+   * myRMarkerObject.off("ondragend");
+   */
+  utils.map.RMarkerCollection.prototype.off = function (type, handler) {
+    this._overlays.forEach(function (_overlay) {
+      _overlay.off(type, handler, key);
+    });
+  }
+  /*** utils.map.RMarkerCollection 代码结束 ***/
 })(window.utils || (window.utils = {}))
