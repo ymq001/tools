@@ -134,6 +134,10 @@
       maxZoom: _opts.mapMaxZoom,
       filter: _opts.filter
     })
+
+    // _map.addEventListener('tilesloaded', function(e){
+    //   console.log('tilesloaded', e);
+    // })
   }
 
   /**

@@ -454,7 +454,9 @@ export let tools = {
     search = decodeURIComponent(search).replace(/&&/g, `${encodeURIComponent('&')}&`);
     search.split('&').map(function (item) {
       let d = item.split('=');
-      res[d[0].trim().toLowerCase()] = decodeURIComponent(d[1] || '')
+      if (d[0].trim().length > 0) {
+        res[d[0].trim().toLowerCase()] = decodeURIComponent(d[1] || '')
+      }
     });
     return res;
   },

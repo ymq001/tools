@@ -24,6 +24,15 @@
 <body>
   <div style="width:100%;height:100%;border:1px solid gray;margin:10px 0 0 10px;" id="container"></div>
   <script>
+    var tileLayer = new BMap.TileLayer();
+    tileLayer.getTilesUrl = function (tileCoord, zoom) {
+      var x = tileCoord.x;
+      var y = tileCoord.y;
+      var url = 'images1/tiles/' + zoom + '/tile' + x + '_' + y + '.png';
+      return url;
+    }
+  </script>
+  <script>
     $(function () {
       _map = utils.map.initialize({
         mapId: 'container',
@@ -33,7 +42,7 @@
         mapMinZoom: 6
       });
       map = _map._map;
-      $.post('rculist.json', function (json) {
+      $.post('rculist.json', {}, function (json) {
         //console.log(json)
         data = json;
         _map._rdata.initialize({

@@ -26,7 +26,7 @@ webpack 会自动查找src子目录下的 **index.js**文件 作为入口文件�
 - [x] utils.prototype
 - [ ] utils.ajax
 - [ ] utils.possmessage
-- [ ] utils.socket
+- [x] utils.socket
 - [ ] utils.video
 - [x] utils.map
 

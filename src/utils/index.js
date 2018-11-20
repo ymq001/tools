@@ -4,6 +4,7 @@ import { tools } from './tools';
 import { cookies } from './cookies';
 import { protorypes } from './prototype';
 import { socketLib } from './socket';
+import { ajax } from './ajax';
 
 /**
  * @class utils
@@ -18,4 +19,4 @@ import { socketLib } from './socket';
 class utils extends mixin(tools, cookies, protorypes, socketLib) {
 }
 
-export { utils };
+export { utils, ajax };
