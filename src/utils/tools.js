@@ -478,5 +478,33 @@ export let tools = {
     }
     return _params[param.trim().toLowerCase()];
   },
-
+  /**
+   * 简易模板解析器
+   * @param {String} tpl 模板字符串
+   * @param {Object} parse Json对象
+   * @returns {String}
+   * 
+   * @example 示例文档
+   * var html = '我的{{ dream }},我的{{world}}';
+   * utils.tmp(html, {
+   *    dream: '梦想',
+   *    world: '世界'
+   * });
+   * 
+   * // 输出： 我的梦想,我的世界
+   */
+  tmp: function (tpl, parse) {
+    if (!utils.isString(tpl)) return '';
+    if (!(parse instanceof Array)) {
+      parse = [parse];
+    }
+    var parseString = '';
+    parse.forEach(function (obj) {
+      parseString += tpl.replace(/{{\s*\w+\s*}}/g, function (matchs) {
+        var returns = obj[matchs.replace(/{/g, "").replace(/}/g, "").trim()];
+        return (returns + "") == "undefined" ? "" : returns;
+      })
+    });
+    return parseString;
+  }
 }
