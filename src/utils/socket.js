@@ -160,20 +160,20 @@ webSocketLib.prototype = {
         }
       };
       this._socket.onerror = function (evt) {
-        _this._debug && (console.log("[error]socket异常中止,重连", evt));
+        _this.debug && (console.log("[error]socket异常中止,重连", evt));
         _this._fire('onerror', evt);
         _this._lockReconnect = false;
         _this._restart();
       }
       this._socket.onclose = function (evt) {
-        _this._debug && (console.log("[close]socket关闭,重连", evt));
+        _this.debug && (console.log("[close]socket关闭,重连", evt));
         _this._fire('onclose', evt);
         _this._lockReconnect = false;
         _this._isRestart = false;
         _this._restart();
       }
     } catch (error) {
-      _this._debug && (console.log("socket捕获异常,重连", error));
+      _this.debug && (console.log("socket捕获异常,重连", error));
       _this._lockReconnect = false;
       _this._isRestart = false;
       _this._restart();
@@ -232,7 +232,7 @@ webSocketLib.prototype = {
 
     clearTimeout(this.timer); //执行前先清除定时器，防止error和close在某些浏览器下会触发两次重连事件的异常
     this.timer = setTimeout(function () {
-      _this._debug && (console.log("正在尝试socket重连,请稍后..."));
+      _this.debug && (console.log("正在尝试socket重连,请稍后..."));
       _this._reconnect();
     }, 2000);
   }

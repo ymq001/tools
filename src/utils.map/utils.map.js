@@ -30,8 +30,8 @@
    * @param {Number} opts.mapZoom  必要参数 地图初始缩放级别
    * @param {Number} opts.mapMaxZoom  必要参数 地图最大缩放级别，默认 6
    * @param {Number} opts.mapMinZoom  必要参数 地图最小缩放级别，默认 16
-   * @param {Number} opts.isEnableDragging 可选 是否启用滚轮缩放，默认启用 默认值：true
-   * @param {Number} opts.isEnableScrollWheelZoom 可选 是否启用拖拽平移，默认启用 默认值：true
+   * @param {Number} opts.isEnableDragging 可选 是否启用拖拽平移，默认启用 默认值：true
+   * @param {Number} opts.isEnableScrollWheelZoom 可选 是否启用滚轮缩放，默认启用 默认值：true
    * @param {Number} opts.isDisableDbClickZoom 可选 是否禁用双击放大，默认禁用 false
    * @param {Number} opts.isEnableNavigation 可选 是否启用比例尺控件，默认启用 默认值：true
    * @param {Number} opts.isEnableOverview 可选 是否启用缩略图控件，默认启用 默认值：true

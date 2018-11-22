@@ -77,7 +77,7 @@
           openHandlers: function (evt) {
             var msg = getMsg();
             if (msg) {
-              this.send({ CmdInfo: "RcuInfo", RcuID: -1730721076 })
+              this.send([{ CmdInfo: "RcuInfo", RcuID: -1730721076 },{ CmdInfo: "RcuInfo", RcuID: -1730721078 }])
               $msg.prepend(htmlIndex++ + '  触发连接打开回调' + '<br />');
               console.log('open', evt)
             }

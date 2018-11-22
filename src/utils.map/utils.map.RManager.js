@@ -94,59 +94,14 @@
   /**
    * 批量添加相同缩放级别范围中的overlay(覆盖物)
    * @param {Array<BMap.Overlay>} overlays 需要添加到地图上的覆盖物列表
-   * @param {Json} opts 必要参数
+   * @param {Json} opts 必要参数 <b />
+   * <span style="color: red;">如果不传 opts 参数， 则覆盖物自定义属性(attrs)中必须存在 minZoom 和 maxZoom</sapn>
    * @param {Number} opts.minZoom 必要参数 覆盖物可以被显示的地图最小缩放级别，默认取地图最小缩放级别
    * @param {Number} opts.maxZoom 必要参数 覆盖物可以被现实的地图最大缩放级别，默认取地图最大缩放级别
    */
   utils.map.RManager.prototype.addOverlays = function (overlays, opts) {
     if (overlays instanceof Array) {
       for (var i = 0, _overlay; _overlay = overlays[i]; i++) {
-        this.addOverlay(_overlay, opts);
-      }
-      this.show();
-    }
-  }
-  /**
-   * 批量添加相同缩放级别范围中的overlay(覆盖物)  --- 测试阶段
-   * @param {Array} list 需要添加到地图上的覆盖物数据列表
-   * @param {Number} list.x RMarker坐标 经度
-   * @param {Number} list.y RMarker坐标 纬度
-   * @param {Json|String|HTMLElement} list.content 自定义marker内容，可以是Json对象( eg: {url: {String}, size: {BMap.Size}} )，可以是字符串，也可以是dom节点
-   * @param {String} list.content.url marker背景图标链接
-   * @param {BMap.Size} list.content.size marker背景图标大小
-   * @param {BMap.Size} list.anchor Marker的的位置偏移值
-   * @param {Boolean} list.enableDragging 是否启用拖拽，默认为false
-   * @param {Boolean} list.isShowText 是否显示marker名称，默认为true
-   * @param {Boolean} list.isShowCount 是否显示marker角标，默认为false
-   * @param {Boolean} list.count marker角标，可以是数字，也可以是文本
-   * @param {String} list.text marker名称
-   * @param {Json} list.countTheme 角标主题色
-   * @param {String} list.countTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
-   * @param {String} list.countTheme.color 浏览器可以识别的颜色值，默认白色
-   * @param {Json} list.textTheme marker名称主题色
-   * @param {String} list.textTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
-   * @param {String} list.textTheme.color 浏览器可以识别的颜色值，默认白色
-   * @param {Json} list.attrs 存放自定义属性
-   * 
-   * @param {Json} opts 必要参数
-   * @param {Number} opts.minZoom 必要参数 覆盖物可以被显示的地图最小缩放级别，默认取地图最小缩放级别
-   * @param {Number} opts.maxZoom 必要参数 覆盖物可以被现实的地图最大缩放级别，默认取地图最大缩放级别
-   */
-  utils.map.RManager.prototype.addOverlaysFromList = function (list, opts) {
-    if (list instanceof Array) {
-      for (var i = 0, _item, _overlay; _item = list[i]; i++) {
-        var _opts = utils.extend(true, {});
-        _overlay = new utils.map.RMarker(new BMap.Point(_item.x, _item.y), _item.content, {
-          anchor: _item.anchor,
-          enableDragging: _item.enableDragging,
-          isShowText: _item.isShowText,
-          isShowCount: _item.isShowCount,
-          count: _item.count,
-          text: _item.text,
-          countTheme: _item.countTheme,
-          textTheme: _item.textTheme,
-          attrs: _item.attrs
-        });
         this.addOverlay(_overlay, opts);
       }
       this.show();
@@ -385,6 +340,38 @@
       }
     }
     return _overlaylist;
+  }
+  /**
+   * 获取自定义过滤函数匹配的覆盖物坐标数据列表
+   * @param {Function} filter 可选 自定义过滤函数
+   * @return {Array} 返回匹配的覆盖物坐标数据列表
+   */
+  utils.map.RManager.prototype.getPoints = function (filter) {
+    var _pointlist = [];
+    if (!utils.map.tools.isFunction(filter)) {
+      filter = function () { return true; }
+    }
+    for (var i = 0, _overlay; _overlay = this._overlays[i]; i++) {
+      if (filter(_overlay)) {
+        _pointlist.push(_overlay.getPosition());
+      }
+    }
+    return _pointlist;
+  }
+  /**
+   * 设置地图中心点及缩放级别
+   * @param {BMap.Point} center 地图中心点
+   * @param {Number} zoom 可选 地图缩放级别
+   */
+  utils.map.RManager.prototype.centerAndZoom = function (center, zoom) {
+    if(!(center instanceof BMap.Point)){
+      console.log('请检查center类型是否是 BMap.Point');
+    }
+    if(utils.map.tools.isNumber(zoom) == false) {
+      zoom = this._map.getZoom();
+    }
+    this._map.centerAndZoom(center, zoom);
+    this.show();
   }
   /*** utils.map.RManager 代码结束 ***/
 })(window.utils || (window.utils = {}))

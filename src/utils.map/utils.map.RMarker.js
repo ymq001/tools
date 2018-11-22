@@ -27,7 +27,7 @@
    * @param {Boolean} opts.enableDragging 是否启用拖拽，默认为false
    * @param {Boolean} opts.isShowText 是否显示marker名称，默认为true
    * @param {Boolean} opts.isShowCount 是否显示marker角标，默认为false
-   * @param {Boolean} opts.count marker角标，可以是数字，也可以是文本
+   * @param {Number|String} opts.count marker角标，可以是数字，也可以是文本
    * @param {String} opts.text marker名称
    * @param {Json} opts.countTheme 角标主题色
    * @param {String} opts.countTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
@@ -254,7 +254,7 @@
     _this._map._index = _this._opts.zIndex || _this._map._index || 0;
     utils.map.tools.extend(div.style, {
       position: "absolute",
-      zIndex: BMap.Overlay.getZIndex(++_this._map._index),
+      zIndex: BMap.Overlay.getZIndex(this._position.lng),//BMap.Overlay.getZIndex(++_this._map._index),
       cursor: "pointer",
       left: pixel.x + anchor.width + "px",
       top: pixel.y + anchor.height + "px"
@@ -273,6 +273,13 @@
     // 获取主容器的高宽
     _this._getContainerSize();
 
+    //兼容右键菜单设置项
+    _this.Ua = div;
+    _this.K = {
+      Ed: "url(../../Scripts/map/images/closedhand.cur) 8 8,move",
+      Wb: "url(../../Scripts/map/images/openhand.cur) 8 8,default"
+    }
+
     return div;
   }
 
@@ -283,6 +290,7 @@
    */
   utils.map.RMarker.prototype.draw = function () {
     this._draw();
+    _dispatchEvent(this, 'onload');
   }
   /**
    * 为自定义的Marker设定显示位置，实现自定义覆盖物的draw方法
@@ -306,7 +314,7 @@
    * @param {BMap.Size} content.size 背景图标大小
    * @param {Boolean} content.isShowText 是否显示marker名称
    * @param {Boolean} content.isShowCount 是否显示marker角标
-   * @param {Number} content.count marker角标内容
+   * @param {Number|String} content.count marker角标，可以是数字，也可以是文本
    * @param {String} content.text marker名称
    * @param {Number} content.lng marker坐标纬度
    * @param {Number} content.lat marker坐标经度
@@ -638,17 +646,38 @@
   utils.map.RMarker.prototype._setEventDispath = function () {
     var me = this,
       div = me._container,
-      isMouseDown = false,
-      // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计算
-      startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参数   
+      _offset = { //鼠标位置距离覆盖物左上角的x、y轴偏差值
+        left: 0,
+        top: 0
+      },
+      isMouseDown = false,  // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计算
+      startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参数
+
+    //获取边距
+    function offset(target) {
+      var top = 0,
+        left = 0
+
+      while (target.offsetParent) {
+        top += target.offsetTop
+        left += target.offsetLeft
+        target = target.offsetParent
+      }
+
+      return {
+        top: top,
+        left: left,
+      }
+    }
 
     // 通过e参数获取当前鼠标所在位置
     function _getPositionByEvent(e) {
-      var e = window.event || e,
-        x = e.pageX || e.clientX || 0,
-        y = e.pageY || e.clientY || 0,
-        pixel = new BMap.Pixel(x, y),
-        point = me._map.pixelToPoint(pixel);
+      var e = window.event || e;
+      var x = e.pageX || e.clientX || 0;
+      var y = e.pageY || e.clientY || 0;
+
+      var pixel = new BMap.Pixel(x, y);
+      var point = me._map.pixelToPoint(pixel);
       return {
         "pixel": pixel,
         "point": point
@@ -657,6 +686,7 @@
 
     // 单击事件
     utils.map.tools.on(div, "onclick", function (e) {
+      var position = _getPositionByEvent(e);
       /**
        * 点击Marker时，派发事件的接口
        * @name RMarker#onclick
@@ -671,7 +701,11 @@
        *     alert(e.type);  
        * });
        */
-      _dispatchEvent(me, "onclick");
+      _dispatchEvent(me, "onclick", {
+        "point": position.point,
+        "pixel": position.pixel,
+        "attrs": me._opts.attrs
+      });
       _stopAndPrevent(e);
     });
 
@@ -696,7 +730,8 @@
        */
       _dispatchEvent(me, "ondblclick", {
         "point": position.point,
-        "pixel": position.pixel
+        "pixel": position.pixel,
+        "attrs": me._opts.attrs
       });
       _stopAndPrevent(e);
     });
@@ -722,7 +757,8 @@
        */
       _dispatchEvent(me, "onmouseover", {
         "point": position.point,
-        "pixel": position.pixel
+        "pixel": position.pixel,
+        "attrs": me._opts.attrs
       });
       _stopAndPrevent(e);
     }
@@ -748,7 +784,8 @@
        */
       _dispatchEvent(me, "onmouseout", {
         "point": position.point,
-        "pixel": position.pixel
+        "pixel": position.pixel,
+        "attrs": me._opts.attrs
       });
       _stopAndPrevent(e);
     }
@@ -774,7 +811,8 @@
        */
       _dispatchEvent(me, "onmouseup", {
         "point": position.point,
-        "pixel": position.pixel
+        "pixel": position.pixel,
+        "attrs": me._opts.attrs
       });
 
       if (me._container.releaseCapture) {
@@ -790,6 +828,10 @@
         _stopAndPrevent(e);
         return;
       }
+      position.pixel.x -= _offset.left;
+      position.pixel.y -= _offset.top;
+
+      position.point = me._map.pixelToPoint(position.pixel);
       // 拖拽结束时，释放鼠标捕获
       me._container.releaseCapture && me._container.releaseCapture();
       /**
@@ -810,7 +852,8 @@
        */
       _dispatchEvent(me, "ondragend", {
         "point": position.point,
-        "pixel": position.pixel
+        "pixel": position.pixel,
+        "attrs": me._opts.attrs
       });
       isMouseDown = false;
       startPosition = null;
@@ -862,7 +905,8 @@
        */
       _dispatchEvent(me, "ondragging", {
         "point": position.point,
-        "pixel": position.pixel
+        "pixel": position.pixel,
+        "attrs": me._opts.attrs
       });
       _stopAndPrevent(e);
     }
@@ -873,8 +917,11 @@
       if (e.button == 2) {
         _dispatchEvent(me, "onrightclick", {
           "point": position.point,
-          "pixel": position.pixel
+          "pixel": position.pixel,
+          "attrs": me._opts.attrs
         });
+        _stopAndPrevent(e);
+        return;
       }
       /**
        * 在Marker上按下鼠标时，派发事件的接口
@@ -894,7 +941,8 @@
        */
       _dispatchEvent(me, "onmousedown", {
         "point": position.point,
-        "pixel": position.pixel
+        "pixel": position.pixel,
+        "attrs": me._opts.attrs
       });
 
       if (me._container.setCapture) {
@@ -910,6 +958,12 @@
         _stopAndPrevent(e);
         return;
       }
+      _offset = me._map.pointToPixel(me.getPosition());
+      _offset = {
+        left: position.pixel.x - _offset.x,
+        top: position.pixel.y - _offset.y
+      };
+
       startPosition = position.pixel;
       /**
        * 开始拖拽Marker时，派发事件的接口
@@ -929,8 +983,11 @@
        */
       _dispatchEvent(me, "ondragstart", {
         "point": position.point,
-        "pixel": position.pixel
+        "pixel": position.pixel,
+        "attrs": me._opts.attrs
       });
+      me._map.lastOverlayZIndex = (me._map.lastOverlayZIndex || 100);
+      this.style.zIndex = me._map.lastOverlayZIndex++;
       isMouseDown = true;
       // 设置拖拽开始的鼠标手型
       me._setCursor("dragstart");
@@ -987,7 +1044,9 @@
    * @return 无返回值
    */
   utils.map.RMarker.prototype.remove = function () {
-    _dispatchEvent(this, "onremove");
+    _dispatchEvent(this, "onremove", {
+      "attrs": this._opts.attrs
+    });
     // 清除主容器上的事件绑定
     if (this._container) {
       _purge(this._container);
@@ -997,11 +1056,75 @@
       this._container.parentNode.removeChild(this._container);
     }
   }
+  /**
+   * 添加右键菜单 参考百度地图 Marker 的api addContextMenu
+   * @param {BMap.ContextMenu} control 右键菜单实例
+   * @example 参考示例
+   * var map = new BMap.Map("container");
+   * map.centerAndZoom(new BMap.Point(116.309965, 40.058333), 17);
+   * var point = new BMap.Point(116.30816, 40.056863);
+   * var myRMarkerObject =  new utils.map.RMarker({
+   *  position: point, 
+   *  content:{
+   *    url: 'images/yunweiban.png',
+   *    size: new BMap.Size(50, 40)
+   *  },
+   *  anchor: new BMap.Size(-47, -116),
+   *  enableDragging: true,
+   *  text: '耶路撒冷的冷',
+   *  count: 10,
+   *  isShowCount: true,
+   *  attrs: { //自定义属性可以在这里添加
+   *    rcuId: 123
+   *  }
+   * });
+   * map.addOverlay(myRMarkerObject);
+   * 
+   * var removeMarker = function(){
+   *  //do something...
+   * }
+   * var markerMenu = new BMap.ContextMenu();
+   * markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(marker)));
+   * myRMarkerObject.addContextMenu(markerMenu);
+   */
+  utils.map.RMarker.prototype.addContextMenu = function (control) {
+    control && utils.map.tools.isFunction(control.qa) && (control.qa(this), _dispatchEvent(control, 'onaddcontextmenu'));
+    utils.map.tools.on(this, "onrightclick", function (e) {
+      if (!!this._map.lastOverlayMenu && this._map.lastOverlayMenu != control) {
+        this._map.lastOverlayMenu.B.style.visibility = 'hidden';
+      }
+      control.show();
+      var _pixel = this._map.pointToPixel(e.target._position);
+      var _size = e.target._size;
+      var l = e.pixel.x - _pixel.x;
+      var t = e.pixel.y - _pixel.y - _size.height;
+      control.B.style.top = t + 'px';
+      control.B.style.left = l + 'px';
+      this._map.lastOverlayMenu = control;
+    });
+  }
+  /**
+   * 移除右键菜单
+   * @param {BMap.ContextMenu} control 右键菜单实例
+   * @example 参考示例
+   * 
+   * var removeMarker = function(){
+   *  //do something...
+   *  myRMarkerObject.removeContextMenu(markerMenu); //移除右键菜单
+   *  alert('移除成功');
+   * }
+   * var markerMenu = new BMap.ContextMenu();
+   * markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(marker)));
+   * myRMarkerObject.addContextMenu(markerMenu);
+   */
+  utils.map.RMarker.prototype.removeContextMenu = function (control) {
+    control && utils.map.tools.isFunction(control.remove) && (_dispatchEvent(control, 'onremovecontextmenu'), control.remove())
+  }
 
   /**
    * 注册对象的事件监听器
    * @grammar obj.addEventListener(type, handler[, key])
-   * @param 	{string}   type         自定义事件的名称 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart
+   * @param 	{string}   type         自定义事件的名称 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart (on)rightclick (on)load
    * @param 	{Function} handler      自定义事件被触发时应该调用的回调函数
    * @param 	{string}   key		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。   *  
    * @remark 	事件类型区分大小写。如果自定义事件名称不是以小写"on"开头，该方法会给它加上"on"再进行判断，即"click"和"onclick"会被认为是同一种事件。 
@@ -1018,7 +1141,7 @@
   /**
    * 移除对象的事件监听器
    * @grammar obj.removeEventListener(type, handler)
-   * @param {string}   type     事件类型 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart
+   * @param {string}   type     事件类型 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart (on)rightclick (on)load
    * @param {Function|string} handler  要移除的事件监听函数或者监听函数的key
    * @remark 	如果第二个参数handler没有被绑定到对应的自定义事件中，什么也不做。
    * 
@@ -1113,7 +1236,7 @@
    * @param {Boolean} opts.enableDragging 是否启用拖拽，默认为false
    * @param {Boolean} opts.isShowText 是否显示marker名称，默认为true
    * @param {Boolean} opts.isShowCount 是否显示marker角标，默认为false
-   * @param {Boolean} opts.count marker角标，可以是数字，也可以是文本
+   * @param {Number|String} content.count marker角标，可以是数字，也可以是文本
    * @param {String} opts.text marker名称
    * @param {Json} opts.countTheme 角标主题色
    * @param {String} opts.countTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
@@ -1159,7 +1282,7 @@
   /**
    * 注册对象的事件监听器
    * @grammar obj.addEventListener(type, handler[, key])
-   * @param 	{string}   type         自定义事件的名称 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart
+   * @param 	{string}   type         自定义事件的名称 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart (on)rightclick (on)load
    * @param 	{Function} handler      自定义事件被触发时应该调用的回调函数
    * @param 	{string}   key		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。   *  
    * @remark 	事件类型区分大小写。如果自定义事件名称不是以小写"on"开头，该方法会给它加上"on"再进行判断，即"click"和"onclick"会被认为是同一种事件。 
@@ -1177,7 +1300,7 @@
   /**
    * 移除对象的事件监听器
    * @grammar obj.removeEventListener(type, handler)
-   * @param {string}   type     事件类型 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart
+   * @param {string}   type     事件类型 事件名称包括(on)click (on)dbclick (on)mouseover (on)mouseout (on)mousedown (on)mouseup (on)dragend (on)dragging (on)dragstart (on)rightclick (on)load
    * @param {Function|string} handler  要移除的事件监听函数或者监听函数的key
    * @remark 	如果第二个参数handler没有被绑定到对应的自定义事件中，什么也不做。
    * 
@@ -1187,6 +1310,43 @@
   utils.map.RMarkerCollection.prototype.off = function (type, handler) {
     this._overlays.forEach(function (_overlay) {
       _overlay.off(type, handler, key);
+    });
+  }
+
+  /**
+   * 批量添加右键菜单 参考百度地图 Marker 的api addContextMenu
+   * @param {BMap.ContextMenu} control 右键菜单实例
+   * @example 参考示例
+   * 
+   * var removeMarker = function(){
+   *  //do something...
+   * }
+   * var markerMenu = new BMap.ContextMenu();
+   * markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(marker)));
+   * myRMarkerObject.addContextMenu(markerMenu);
+   */
+  utils.map.RMarkerCollection.prototype.addContextMenu = function (control) {
+    this._overlays.forEach(function (_overlay) {
+      _overlay.addContextMenu(control);
+    });
+  }
+  /**
+   * 批量移除右键菜单
+   * @param {BMap.ContextMenu} control 右键菜单实例
+   * @example 参考示例
+   * 
+   * var removeMarker = function(){
+   *  //do something...
+   *  myRMarkerObject.removeContextMenu(markerMenu); //移除右键菜单
+   *  alert('移除成功');
+   * }
+   * var markerMenu = new BMap.ContextMenu();
+   * markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(marker)));
+   * myRMarkerObject.addContextMenu(markerMenu);
+   */
+  utils.map.RMarkerCollection.prototype.removeContextMenu = function (control) {
+    this._overlays.forEach(function (_overlay) {
+      _overlay.removeContextMenu(control);
     });
   }
   /*** utils.map.RMarkerCollection 代码结束 ***/
