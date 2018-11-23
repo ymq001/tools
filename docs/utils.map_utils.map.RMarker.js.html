@@ -125,6 +125,13 @@
     }
 
     /**
+     * 是否启用文档碎片能力提升渲染性能
+     * @private
+     * @type {Boolean}
+     */
+    this._isEnableFragment = false;
+
+    /**
      * map对象
      * @private
      * @type {Map}
@@ -161,6 +168,7 @@
 
     opts = opts || {};
     opts.text = opts.text || opts.name;
+    this._isEnableFragment = opts.isEnableFragment || false;
     /**
      * _opts是默认参数赋值。
      * 下面通过用户输入的opts，对默认参数赋值
@@ -273,11 +281,7 @@
    * @return {Dom} 返回自定义生成的dom节点
    */
   utils.map.RMarker.prototype.initialize = function (map) {
-    var _this = this;
     var div = this._initialize(map, map.getPanes().labelPane);
-
-    // 给主容器添加事件处理
-    _this._setEventDispath();
     return div;
   }
 
@@ -314,7 +318,7 @@
     // 给主容器添加上用户自定义的内容
     _this._appendContent();
     // 给主容器添加事件处理
-    //_this._setEventDispath();
+    _this._setEventDispath();
     // 获取主容器的高宽
     _this._getContainerSize();
 
@@ -1271,6 +1275,7 @@
    * @property {HTMLElement} _container marker主容器
    * @property {RMarker} _overlays 将参数数组解析成RMarker后的覆盖物列表
    * 
+   * @param {BMap.Map} map 百度地图实例
    * @param {Array&lt;RMarker>} opts Rmarker中的参数数组
    * @param {BMap.Point} opts.position marker的位置
    * @param {Json|String|HTMLElement} opts.content 自定义marker内容，可以是Json对象( eg: {url: {String}, size: {BMap.Size}} )，可以是字符串，也可以是dom节点
@@ -1290,14 +1295,15 @@
    * @param {String} opts.textTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
    * @param {String} opts.textTheme.color 浏览器可以识别的颜色值，默认白色
    * @param {Json} opts.attrs 存放自定义属性
+   * @param {Boolean} isEnableFragment 是否开启Fragment优化措施
    */
-  utils.map.RMarkerCollection = function (opts) {
+  utils.map.RMarkerCollection = function (map, opts, isEnableFragment) {
     /**
     * map对象
     * @private
     * @type {Map}
     */
-    this._map = null;
+    this._map = map;
     /**
      * marker主容器
      * @private
@@ -1314,8 +1320,27 @@
     if (utils.map.tools.isArray(opts) == false) {
       throw ('请传递Array类型的参数');
     }
-    for (var i = 0, _opt; _opt = opts[i]; i++) {
-      this._overlays.push(new utils.map.RMarker(_opt, i));
+
+    if (!!isEnableFragment) {
+      var docFragment = document.createDocumentFragment();
+      for (var i = 0, _opt; _opt = opts[i]; i++) {
+        _opt.isEnableFragment = true;
+        var _overlay = new utils.map.RMarker(_opt, i);
+        //console.log(_overlay);
+
+        _overlay._initialize(this._map, docFragment);
+        //_overlay.draw();
+        this._overlays.push(_overlay);
+        (this._map._customOverlays || this._map.ze).push(_overlay);
+      }
+
+      this._map.getPanes().labelPane.appendChild(docFragment);
+      this._map.isEnableFragment = true;
+    } else{
+      for (var i = 0, _opt; _opt = opts[i]; i++) {
+        this._overlays.push(new utils.map.RMarker(_opt, i));
+      }
+      this._map.isEnableFragment = false;
     }
   }
   /**

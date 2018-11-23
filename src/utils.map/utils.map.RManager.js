@@ -55,14 +55,22 @@
     this._filter = utils.map.tools.isFunction(opts.filter) ? opts.filter : function () { return true; };
     this._overlays = [];  //用于存放overlay列表
     this._visible = false;//控制显隐所有覆盖物
+    this._isPageLoad = false;
+    this._lockRenderder = false;
 
     //注册拖拽和缩放事件
     var _this = this;
     this._map.addEventListener('zoomend', function () {
+      utils && utils.date && console.log('map.zoomend', utils.date.format(new Date(), 'hh:mm:ss S'));
+      console.time('map.zoomend');
       _this.show();
+      console.timeEnd('map.zoomend');
     });
     this._map.addEventListener('dragend', function () {
+      utils && utils.date && console.log('map.dragend', utils.date.format(new Date(), 'hh:mm:ss S'));
+      console.time('map.dragend');
       _this.show();
+      console.timeEnd('map.dragend');
     });
     return true;
   }
@@ -246,6 +254,8 @@
   }
   /**
    * 切换显隐覆盖物
+   * 增加 documentFragment 提升渲染性能
+   * 增加 lockRenderder 提升缩放、平移事件频繁触发时节流
    * @private
    * @param {Function} filter 可选，过滤覆盖物的函数钩子，必须返回boolean类型的值，默认为RManager的属性_filter
    */
@@ -253,39 +263,45 @@
     var _this = this;
     var _zoom = this._map.getZoom();
     var _bounds = this._getRealBounds();
+    var docFragment  = document.createDocumentFragment();
+    var len = this._overlays.length;
     filter = utils.map.tools.isFunction(filter) ? filter : this._filter;
-    setTimeout(function () {
-      for (var i = 0, _overlay; _overlay = _this._overlays[i]; i++) {
-        _overlay.attrs._isAdded = !!_overlay.attrs._isAdded;
-        //判断是否在可视区域内  &&  判断当前缩放级别是否符合覆盖物的缩放级别显示范围
-        if (_bounds.containsPoint(_overlay.getPosition()) && _zoom >= _overlay.attrs.minZoom && _zoom <= _overlay.attrs.maxZoom) {
-          _overlay.attrs._isInViewing = true;
-          if (!_overlay.attrs._isAdded) {
-            _this._map.addOverlay(_overlay);
-            _overlay.attrs._isAdded = true;
-            !_this._visible && _overlay.hide();
-          } else {
-            if (filter(_overlay)) {
-              if (_overlay.attrs._isVisible == false && _this._visible == true) {
-                _overlay.show();
-                _overlay.attrs._isVisible == true;
-              } else if (_overlay.attrs._isVisible == true && _this._visible == false) {
-                _overlay.hide();
-                _overlay.attrs._isVisible == false;
-              }
-              //_this._visible ? _overlay.show() : _overlay.hide();
-            } else {
+
+    this._lockRenderder = true;
+
+    for (var i = len -1, _overlay; _overlay = this._overlays[i]; i--) {
+      !!this._map.isEnableFragment && !this._isPageLoad && docFragment.appendChild(_overlay._container);
+      _overlay.attrs._isAdded = !!_overlay.attrs._isAdded;
+      //判断是否在可视区域内  &&  判断当前缩放级别是否符合覆盖物的缩放级别显示范围
+      if (_bounds.containsPoint(_overlay.getPosition()) && _zoom >= _overlay.attrs.minZoom && _zoom <= _overlay.attrs.maxZoom) {
+        _overlay.attrs._isInViewing = true;
+        if (!_overlay.attrs._isAdded) {
+          !this._map.isEnableFragment && _this._map.addOverlay(_overlay);
+          _overlay.attrs._isAdded = true;
+          !_this._visible && (!!this._map.isEnableFragment ? (_overlay._container.style.display = 'none') : _overlay.hide());
+        } else {
+          if (filter(_overlay)) {
+            if (_overlay.attrs._isVisible == false && _this._visible == true) {
+              !!this._map.isEnableFragment ? _overlay._container.style.display = 'block' : _overlay.show();
+              _overlay.attrs._isVisible == true;
+            } else if (_overlay.attrs._isVisible == true && _this._visible == false) {
+              !!this._map.isEnableFragment ? _overlay._container.style.display = 'none' : _overlay.hide();
               _overlay.attrs._isVisible == false;
-              _overlay.hide();
             }
+          } else {
+            _overlay.attrs._isVisible == false;
+            !!this._map.isEnableFragment ? _overlay._container.style.display = 'none' : _overlay.hide();
           }
-        } else if (_overlay.attrs._isAdded) {
-          _overlay.attrs._isInViewing = false;
-          _overlay.attrs._isVisible == false;
-          _overlay.hide();
         }
+      } else if (_overlay.attrs._isAdded) {
+        _overlay.attrs._isInViewing = false;
+        _overlay.attrs._isVisible == false;
+        !!this._map.isEnableFragment ? _overlay._container.style.display = 'none' : _overlay.hide();
       }
-    }, 0);
+    }
+    !!this._map.isEnableFragment && !this._isPageLoad && this._map.getPanes().labelPane.appendChild(docFragment);
+    this._lockRenderder = false; //
+    this._isPageLoad = true;
   }
   /**
    * 获取真实的可视区域范围
