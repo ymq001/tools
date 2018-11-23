@@ -33,6 +33,7 @@
       map = _map._map;
       $.post('rculist.json', function (json) {
         //console.log(json)
+        json = json.slice(0, 700);
         window.json = json;
         _map._rdata.initialize({
           source: json,

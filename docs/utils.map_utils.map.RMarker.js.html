@@ -1265,7 +1265,7 @@
    * @class
    * @alias utils.map.RMarkerCollection
    * @classdesc utils.map.RMarkerCollection
-   * @description 批量创建自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/batchMarker.html|RMarkerCollection示例} &lt;br />
+   * @description 批量创建自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/batchMarker.html|RMarkerCollection示例(1000点示例)} {@link http://172.26.1.40/docs/examples/batchMarker.1.html|RMarkerCollection示例(700点示例)} &lt;br />
    * &lt;span style="color:red;">&lt;b>注意：&lt;/b> 暂时只支持RMarker类型的覆盖物&lt;/span>
    * 
    * @extends RMarker
@@ -1295,7 +1295,7 @@
    * @param {String} opts.textTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
    * @param {String} opts.textTheme.color 浏览器可以识别的颜色值，默认白色
    * @param {Json} opts.attrs 存放自定义属性
-   * @param {Boolean} isEnableFragment 是否开启Fragment优化措施
+   * @param {Boolean} isEnableFragment 是否开启Fragment优化措施 默认开启
    */
   utils.map.RMarkerCollection = function (map, opts, isEnableFragment) {
     /**
@@ -1320,6 +1320,8 @@
     if (utils.map.tools.isArray(opts) == false) {
       throw ('请传递Array类型的参数');
     }
+
+    isEnableFragment = utils.map.tools.isBoolean(isEnableFragment) ? isEnableFragment : true;
 
     if (!!isEnableFragment) {
       var docFragment = document.createDocumentFragment();
