@@ -384,9 +384,12 @@ socket.prototype.close = function () {
  * })
  */
 socket.prototype.on = function (type, handler, key) {
-  this._api._on(type, handler, key);
   if(type.indexOf('open') > -1){
+    this._api._off(type);
+    this._api._on(type, handler, key);
     this._api._fire('onopen');
+  }else{
+    this._api._on(type, handler, key);
   }
 }
 /**

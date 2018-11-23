@@ -11,11 +11,11 @@ const entryPath = 'src';
 const clearPaths = ['dist/lib/**.js', 'dist/lib/**.js.map'];
 const pathMatch = node_lib ? '**/index.js' : '**/**.js';
 
-require('babel-polyfill');
+//require('babel-polyfill');
 
 let webpackConfig = {
   entry: {
-    vendor: 'babel-polyfill'
+    //vendor: 'babel-polyfill'
   },
   output: {
     filename: '[name].js',

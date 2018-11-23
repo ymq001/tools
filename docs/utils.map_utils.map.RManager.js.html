@@ -362,7 +362,7 @@
     var returns = undefined;
     if (!utils.map.tools.isString(key)) key = 'id';
     for (var i = 0, _overlay; _overlay = this._overlays[i]; i++) {
-      if (_overlay.attrs[key] == value) {
+      if (_overlay.attrs[key] == value || _overlay._opts.attrs[key] == value) {
         returns = _overlay;
         break;
       }
