@@ -56,22 +56,31 @@
     this._overlays = [];  //用于存放overlay列表
     this._visible = false;//控制显隐所有覆盖物
     this._isPageLoad = false;
-    this._lockRenderder = false;
 
     //注册拖拽和缩放事件
+    //事件触发频繁，添加函数防抖和节流，提升性能
     var _this = this;
     this._map.addEventListener('zoomend', function () {
-      utils && utils.date && console.log('map.zoomend', utils.date.format(new Date(), 'hh:mm:ss S'));
-      console.time('map.zoomend');
-      _this.show();
-      console.timeEnd('map.zoomend');
+      loadShow('map.zoomend');
     });
     this._map.addEventListener('dragend', function () {
-      utils && utils.date && console.log('map.dragend', utils.date.format(new Date(), 'hh:mm:ss S'));
-      console.time('map.dragend');
-      _this.show();
-      console.timeEnd('map.dragend');
+      loadShow('map.dragend');
     });
+    var lockRenderder = true;
+    var timer = null;
+    function loadShow(text){
+      if(!lockRenderder) return;
+      lockRenderder = false;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        //utils && utils.date && console.log(text, utils.date.format(new Date(), 'hh:mm:ss S'));
+        //console.time(text);
+        _this.show();
+        //console.timeEnd(text);
+        //lockRenderder = true;
+      }, 600);
+    }
+
     return true;
   }
   /**
@@ -211,7 +220,7 @@
   /**
    * 获取可视范围内的覆盖物列表
    * @param {Number} zoom 需要检测的地图缩放级别
-   * @return {Array} 返回当前缩放级别下可视区域内的覆盖物列表
+   * @return {Array} 返回指定缩放级别下可视区域内的覆盖物列表
    */
   utils.map.RManager.prototype.getViewingOverlaysByZoom = function (zoom) {
     var _overlaylist = [];
@@ -223,6 +232,13 @@
       }
     }
     return _overlaylist;
+  }
+  /**
+   * 获取当前缩放级别下的可视范围内的覆盖物列表
+   * @return {Array} 返回当前缩放级别下可视区域内的覆盖物列表
+   */
+  utils.map.RManager.prototype.getViewingOverlays = function () {
+    return this.getViewingOverlaysByZoom(this,_map.getZoom());
   }
   /**
    * 显示可视区内覆盖物
@@ -267,8 +283,6 @@
     var len = this._overlays.length;
     filter = utils.map.tools.isFunction(filter) ? filter : this._filter;
 
-    this._lockRenderder = true;
-
     for (var i = len -1, _overlay; _overlay = this._overlays[i]; i--) {
       !!this._map.isEnableFragment && !this._isPageLoad && docFragment.appendChild(_overlay._container);
       _overlay.attrs._isAdded = !!_overlay.attrs._isAdded;
@@ -300,7 +314,6 @@
       }
     }
     !!this._map.isEnableFragment && !this._isPageLoad && this._map.getPanes().labelPane.appendChild(docFragment);
-    this._lockRenderder = false; //
     this._isPageLoad = true;
   }
   /**
