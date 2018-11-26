@@ -73,12 +73,12 @@
       lockRenderder = false;
       clearTimeout(timer);
       timer = setTimeout(() => {
-        //utils && utils.date && console.log(text, utils.date.format(new Date(), 'hh:mm:ss S'));
-        //console.time(text);
+        utils && utils.date && console.log(text, utils.date.format(new Date(), 'hh:mm:ss S'));
+        console.time(text);
         _this.show();
-        //console.timeEnd(text);
-        //lockRenderder = true;
-      }, 600);
+        console.timeEnd(text);
+        lockRenderder = true;
+      }, 100);
     }
 
     return true;
@@ -238,7 +238,7 @@
    * @return {Array} 返回当前缩放级别下可视区域内的覆盖物列表
    */
   utils.map.RManager.prototype.getViewingOverlays = function () {
-    return this.getViewingOverlaysByZoom(this,_map.getZoom());
+    return this.getViewingOverlaysByZoom(this._map.getZoom());
   }
   /**
    * 显示可视区内覆盖物
@@ -271,7 +271,6 @@
   /**
    * 切换显隐覆盖物
    * 增加 documentFragment 提升渲染性能
-   * 增加 lockRenderder 提升缩放、平移事件频繁触发时节流
    * @private
    * @param {Function} filter 可选，过滤覆盖物的函数钩子，必须返回boolean类型的值，默认为RManager的属性_filter
    */
