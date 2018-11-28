@@ -8,7 +8,7 @@
    * @class
    * @alias utils.map.RManager
    * @classdesc utils.map.RManager
-   * @description 自定义点聚合，实现按组织聚合的效果。 {@link http://172.26.1.40/docs/examples/rmanager.html|RManager示例} <br />
+   * @description 自定义点聚合，实现按组织聚合的效果。 {@link http://172.26.1.40/docs/examples/rmanager.html|<span style="color: red;">RManager示例</span>} <br />
    * 实现缓存机制，首屏只加载可视区域内的覆盖物 <br />
    * 实现根据自定义属性过滤覆盖物效果 <br />
    * 实现根据预设的覆盖物缩放级别范围显隐覆盖物
@@ -43,7 +43,7 @@
    */
   utils.map.RManager = function (map, opts) {
     if (!(map instanceof BMap.Map)) {
-      console.warn('请传递正确的BMap的实例');
+      throw '请传递正确的BMap的实例';
       return false;
     }
     opts = opts || {};
@@ -53,8 +53,9 @@
     this.minZoom = utils.map.tools.isNumber(opts.minZoom) ? opts.minZoom : 6;
     this.maxZoom = utils.map.tools.isNumber(opts.maxZoom) ? opts.maxZoom : 16;
     this._filter = utils.map.tools.isFunction(opts.filter) ? opts.filter : function () { return true; };
+    this._customFilter = function () { return true; };
     this._overlays = [];  //用于存放overlay列表
-    this._visible = false;//控制显隐所有覆盖物
+    this._visible = true;//控制显隐所有覆盖物
     this._isPageLoad = false;
 
     //注册拖拽和缩放事件
@@ -68,14 +69,14 @@
     });
     var lockRenderder = true;
     var timer = null;
-    function loadShow(text){
-      if(!lockRenderder) return;
+    function loadShow(text) {
+      if (!lockRenderder) return;
       lockRenderder = false;
       clearTimeout(timer);
       timer = setTimeout(() => {
         utils && utils.date && console.log(text, utils.date.format(new Date(), 'hh:mm:ss S'));
         console.time(text);
-        _this.show();
+        _this.show(_this._customFilter);
         console.timeEnd(text);
         lockRenderder = true;
       }, 100);
@@ -93,7 +94,7 @@
    */
   utils.map.RManager.prototype.addOverlay = function (overlay, opts) {
     if (!(overlay instanceof BMap.Overlay)) {
-      console.warn('请传递正确的覆盖物实例对象');
+      throw '请传递正确的覆盖物实例对象';
       return false;
     }
 
@@ -130,12 +131,12 @@
    * @param {BMap.Overlay} overlay 需要被移除的覆盖物
    * @return {Boolean} 
    */
-  utils.map.RManager.prototype.removerOverlay = function (overlay) {
+  utils.map.RManager.prototype.removeOverlay = function (overlay) {
     if (!(overlay instanceof BMap.Overlay)) {
-      console.warn('请传递正确的覆盖物实例对象');
+      throw '请传递正确的覆盖物实例对象';
       return false;
     }
-    this._map.removerOverlay(overlay);    //移除地图上的覆盖物
+    this._map.removeOverlay(overlay);    //移除地图上的覆盖物
     this._removeOverlayFromList(overlay); //移除缓存的覆盖物列表中的覆盖物
     return true;
   }
@@ -147,7 +148,7 @@
   utils.map.RManager.prototype.removeOverlays = function (overlays) {
     if (overlays instanceof Array) {
       for (var i = 0, _overlay; _overlay = overlays[i]; i++) {
-        this.removerOverlay(_overlay);
+        this.removeOverlay(_overlay);
       }
     }
   }
@@ -160,11 +161,11 @@
    */
   utils.map.RManager.prototype.removeViewingOverlay = function (overlay) {
     if (!(overlay instanceof BMap.Overlay)) {
-      console.warn('请传递正确的覆盖物实例对象');
+      throw '请传递正确的覆盖物实例对象';
       return false;
     }
     if (!overlay.attrs._isInViewing) return false; //当前覆盖物不再可视区域内,直接返回false
-    this._map.removerOverlay(overlay);    //移除地图上的覆盖物
+    this._map.removeOverlay(overlay);    //移除地图上的覆盖物
     this._removeOverlayFromList(overlay); //移除缓存的覆盖物列表中的覆盖物
     return true;
   }
@@ -186,7 +187,7 @@
    */
   utils.map.RManager.prototype.clearOverlays = function () {
     for (var i = 0, _overlay; _overlay = this._overlays[i]; i++) {
-      this._map.removeOverlays(_overlay);
+      this._map.removeOverlay(_overlay);
     }
     this._overlays = [];
   }
@@ -197,7 +198,7 @@
     var _overlaylist = [];
     for (var i = 0, _overlay; _overlay = this._overlays[i]; i++) {
       if (_overlay.attrs._isInViewing) {
-        this._map.removeOverlays(_overlay);
+        this._map.removeOverlay(_overlay);
       } else {
         _overlaylist.push(_overlay);
       }
@@ -218,8 +219,8 @@
     }
   }
   /**
-   * 获取可视范围内的覆盖物列表
-   * @param {Number} zoom 需要检测的地图缩放级别
+   * 获取指定缩放级别下的可视范围内的覆盖物列表
+   * @param {Number} zoom 地图缩放级别
    * @return {Array} 返回指定缩放级别下可视区域内的覆盖物列表
    */
   utils.map.RManager.prototype.getViewingOverlaysByZoom = function (zoom) {
@@ -241,27 +242,29 @@
     return this.getViewingOverlaysByZoom(this._map.getZoom());
   }
   /**
-   * 显示可视区内覆盖物
+   * 显示指定过滤函数过滤出的覆盖物
    * 此方法通过操作元素display属性实现显隐的目的
    * @param {Function} filter 可选，过滤覆盖物的函数钩子，必须返回boolean类型的值，默认为RManager的属性_filter
    */
   utils.map.RManager.prototype.show = function (filter) {
+    this._customFilter = filter;
     filter = utils.map.tools.isFunction(filter) ? filter : this._filter;
-    this._visible = true;
+    this._visible = utils.map.tools.isBoolean(this._visible) ? this._visible : true; //兼容缩放和平移调用
     this._toggleOverlays(filter);
   }
   /**
-   * 隐藏可视区内覆盖物
+   * 隐藏指定过滤函数过滤出的覆盖物
    * 此方法通过操作元素display属性实现显隐的目的
    * @param {Function} filter 可选，过滤覆盖物的函数钩子，必须返回boolean类型的值，默认为RManager的属性_filter
    */
   utils.map.RManager.prototype.hide = function (filter) {
+    this._customFilter = filter;
     filter = utils.map.tools.isFunction(filter) ? filter : this._filter;
     this._visible = false;
     this._toggleOverlays(filter);
   }
   /**
-   * 切换可视区内覆盖物的显隐
+   * 切换指定过滤函数过滤出的覆盖物的显隐
    * 此方法通过操作元素display属性实现显隐的目的
    * @param {Function} filter 可选，过滤覆盖物的函数钩子，必须返回boolean类型的值，默认为RManager的属性_filter
    */
@@ -278,42 +281,53 @@
     var _this = this;
     var _zoom = this._map.getZoom();
     var _bounds = this._getRealBounds();
-    var docFragment  = document.createDocumentFragment();
+    var docFragment = document.createDocumentFragment();
     var len = this._overlays.length;
     filter = utils.map.tools.isFunction(filter) ? filter : this._filter;
 
-    for (var i = len -1, _overlay; _overlay = this._overlays[i]; i--) {
+    for (var i = len - 1, _overlay; _overlay = this._overlays[i]; i--) {
       !!this._map.isEnableFragment && !this._isPageLoad && docFragment.appendChild(_overlay._container);
       _overlay.attrs._isAdded = !!_overlay.attrs._isAdded;
       //判断是否在可视区域内  &&  判断当前缩放级别是否符合覆盖物的缩放级别显示范围
       if (_bounds.containsPoint(_overlay.getPosition()) && _zoom >= _overlay.attrs.minZoom && _zoom <= _overlay.attrs.maxZoom) {
-        _overlay.attrs._isInViewing = true;
         if (!_overlay.attrs._isAdded) {
           !this._map.isEnableFragment && _this._map.addOverlay(_overlay);
-          _overlay.attrs._isAdded = true;
           !_this._visible && (!!this._map.isEnableFragment ? (_overlay._container.style.display = 'none') : _overlay.hide());
-        } else {
-          if (filter(_overlay)) {
-            if (_overlay.attrs._isVisible == false && _this._visible == true) {
-              !!this._map.isEnableFragment ? _overlay._container.style.display = 'block' : _overlay.show();
-              _overlay.attrs._isVisible == true;
-            } else if (_overlay.attrs._isVisible == true && _this._visible == false) {
-              !!this._map.isEnableFragment ? _overlay._container.style.display = 'none' : _overlay.hide();
-              _overlay.attrs._isVisible == false;
-            }
-          } else {
-            _overlay.attrs._isVisible == false;
-            !!this._map.isEnableFragment ? _overlay._container.style.display = 'none' : _overlay.hide();
+          _overlay.attrs._isAdded = true;
+          _overlay.attrs._isVisible = true;
+        }
+        if (filter(_overlay)) {
+          if (_overlay.attrs._isVisible == false && _this._visible == true) {
+            _overlay._container.style.display = 'block';
+            _overlay.attrs._isVisible = true;
+          } else if (_overlay.attrs._isVisible == true && _this._visible == false) {
+            _overlay._container.style.display = 'none';
+            _overlay.attrs._isVisible = false;
           }
+        } else {
+          _overlay.attrs._isVisible = false;
+          _overlay._container.style.display = 'none';
         }
       } else if (_overlay.attrs._isAdded) {
         _overlay.attrs._isInViewing = false;
-        _overlay.attrs._isVisible == false;
-        !!this._map.isEnableFragment ? _overlay._container.style.display = 'none' : _overlay.hide();
+        _overlay.attrs._isVisible = false;
+        _overlay._container.style.display = 'none';
       }
     }
-    !!this._map.isEnableFragment && !this._isPageLoad && this._map.getPanes().labelPane.appendChild(docFragment);
-    this._isPageLoad = true;
+    //!!this._map.isEnableFragment && !this._isPageLoad && this._map.getPanes().labelPane.appendChild(docFragment) && (this._isPageLoad = true);
+    if (!!this._map.isEnableFragment && !this._isPageLoad) {
+      this._map.getPanes().labelPane.appendChild(docFragment);
+      this._isPageLoad = true;
+      var _overlays = this._map.getOverlays();
+      for (var i = len - 1, _overlay; _overlay = _overlays[i]; i--) {
+        //如果是RMarker类型覆盖物，重新获取主容器宽高、和渲染位置
+        if (_overlay instanceof utils.map.RMarker) {
+          _overlay._getContainerSize();
+          _overlay._setEventDispath();
+          _overlay.draw();
+        }
+      }
+    }
   }
   /**
    * 获取真实的可视区域范围
@@ -392,10 +406,10 @@
    * @param {Number} zoom 可选 地图缩放级别
    */
   utils.map.RManager.prototype.centerAndZoom = function (center, zoom) {
-    if(!(center instanceof BMap.Point)){
-      console.log('请检查center类型是否是 BMap.Point');
+    if (!(center instanceof BMap.Point)) {
+      throw '请检查center类型是否是 BMap.Point';
     }
-    if(utils.map.tools.isNumber(zoom) == false) {
+    if (utils.map.tools.isNumber(zoom) == false) {
       zoom = this._map.getZoom();
     }
     this._map.centerAndZoom(center, zoom);

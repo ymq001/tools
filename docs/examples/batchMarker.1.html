@@ -9,12 +9,15 @@
   <script src="./jquery/jquery-1.12.3.min.js"></script>
   <script src="../../dist/vendor.js" defer></script>
   <script src="../../dist/lib/utils.js" defer></script>
-  <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+  <!-- <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script> -->
+  <script src="./map/offlinemap_load.js"></script>
   <!-- <script src="../../src/utils.map/index.js" defer></script> -->
   <script src="../../dist/lib/utils.map.js" defer></script>
   <style>
-    html,body{
-      width:100%;height:100%;
+    html,
+    body {
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
@@ -24,9 +27,10 @@
   <script>
     $(function () {
       _map = utils.map.initialize({
+        isAutoGetConfig: false,
         mapId: 'container',
-        mapCenter: new BMap.Point(119.311736, 31.775347),
-        mapZoom: 10,
+        mapCenter: new BMap.Point(118.940341, 31.902835),
+        mapZoom: 15,
         mapMaxZoom: 16,
         mapMinZoom: 6
       });
@@ -53,9 +57,9 @@
 
         console.time('addOverlays');
         window.myRMarker1 = new utils.map.RMarkerCollection(map, _map._rdata.getDatas());
+        console.log(myRMarker1)
         //map.addOverlay(myRMarker1);
         _map._rmanager.addOverlays(myRMarker1.getOverlays());
-        console.log(myRMarker1)
         console.log('addOverlays', json.length)
         console.timeEnd('addOverlays');
 
@@ -63,10 +67,19 @@
           console.log('click', e);
           //map.centerAndZoom(e.target._position, 11);
         })
-        myRMarker1.on('rightclick', function (e) {
-          console.log('rightclick', e);
-          //map.centerAndZoom(e.target._position, 11);
-        })
+        // myRMarker1.on('rightclick', function (e) {
+        //   console.log('rightclick', e);
+        //   //map.centerAndZoom(e.target._position, 11);
+        // })
+        function getMenu() {
+          var menu = new BMap.ContextMenu();
+          menu.addItem(new BMap.MenuItem('移除', function (e) {
+            console.log('移除')
+          }, 50));
+          return menu;
+        }
+        //注册点位加载完成事件 //覆盖物加载完成后再添加右键菜单 提升性能
+        myRMarker1.addContextMenu(getMenu);
       }, 'json');
 
       // window.myRMarker1 = new utils.map.RMarkerCollection([{

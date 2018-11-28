@@ -77,7 +77,7 @@ webSocketLib.prototype = {
    */
   _on: function (type, handler, key) {
     if (!utils.isFunction(handler)) {
-      console.log('请正确设置注册事件的回调函数 参数[handler]需要Function类型的值');
+      throw '请正确设置注册事件的回调函数 参数[handler]需要Function类型的值';
       return;
     }
     if (utils.isString(key) && !!key.length) {
@@ -103,7 +103,7 @@ webSocketLib.prototype = {
    */
   _off: function (type, handler) {
     if (!utils.isString(type) || !type.length) {
-      console.log('请检查要移除的事件监听器类型是否正确');
+      throw '请检查要移除的事件监听器类型是否正确';
       return;
     }
     if (utils.isFunction(handler)) {
@@ -126,7 +126,7 @@ webSocketLib.prototype = {
    */
   _fire: function (type, args) {
     if (!utils.isString(type) || !type.length) {
-      console.log('请检查要触发的事件监听器类型是否正确');
+      throw '请检查要触发的事件监听器类型是否正确';
       return;
     }
     !this._handles && (this._handles = {});

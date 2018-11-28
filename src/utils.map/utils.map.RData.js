@@ -170,8 +170,8 @@
       }
     }), opts);
 
+    this.setProperty();
     if (utils.map.tools.isArray(this._opts.source) && this._opts.source.length > 0) {
-      this.setProperty();
       this.initialize();
     }
   }
@@ -189,8 +189,8 @@
    * @param {Boolean} opts.isCachedSource 是否需要缓存原始数据，默认为 false 不缓存 <br /> <span style="color: red;">建议：生产环境不缓存以减少内存占用率</span>
    * @param {Boolean} opts.isFromTree 数据源类型是否是树形数据，默认为 true
    * @param {Function} opts.convertAttrs 数据预处理时，用作转换数据属性名称使用 <br />
-   * target convertAttrs函数参数，转换后的数据对象 <br />
-   * source convertAttrs函数参数，转换前的元数据对象 <br />
+   * target convertAttrs函数 形参，转换后的数据对象 <br />
+   * source convertAttrs函数 形参，转换前的元数据对象 <br />
    * <span style="color:red;">target对象属性</span> <br />
    * { <br />
    *    id: '',   //必要 <br />
@@ -219,7 +219,7 @@
         this._source = [];
       }
     } else {
-      console.warn('预处理数据源为空数组,请传入有效数据源');
+      throw '预处理数据源为空数组,请传入有效数据源';
     }
   }
   /**
@@ -246,7 +246,7 @@
    * 转换固定属性(maxZoom、minZoom)
    * 计算数据最大层级
    * @private
-   * @param {Json} data 需要转换属性的元数据
+   * @param {Json} data 需要转换属性的元数据 <br />
    * @return {Json} 添加了maxZoom、minZoom、level的数据对象
    */
   utils.map.RData.prototype._convertAttrs = function (data) {
@@ -272,7 +272,23 @@
   /**
    * 预处理数据为平面数据，数据源为树形结构的数据
    * @param {Json} data 需要预处理的元数据
-   * @param {Function} _convertAttrs 转换属性函数，默认根据设置添加minZoom、maxZoom属性后原样返回
+   * @param {Function} _convertAttrs 转换属性函数，默认根据设置添加minZoom、maxZoom、x、y属性后原样返回 <br />
+   * target convertAttrs函数 形参，转换后的数据对象 <br />
+   * source convertAttrs函数 形参，转换前的元数据对象 <br />
+   * <span style="color:red;">target对象属性</span> <br />
+   * { <br />
+   *    id: '',   //必要 <br />
+   *    name: '', //必要 <br />
+   *    pid: '',  //必要 <br />
+   *    x: x,     //必要 <br />
+   *    y: y,     //必要 <br />
+   *    isMyAttention: false, //非必要 <br />
+   *    level: 0, //非必要 <br />
+   *    minZoom: 6, //必要 <br />
+   *    maxZoom: 16,//必要 <br />
+   *    attrs: {  //自定义属性，非必要 <br />
+   *    } <br />
+   * } <br />
    */
   utils.map.RData.prototype.dataTreeToTable = function (data, _convertAttrs) {
     if (utils.map.tools.isArray(data)) {
@@ -358,7 +374,23 @@
    * 预处理数据为平面数据，数据源平面数据
    * 注意： 元数据中需包含数据项的层级信息(与设置的层级(levelKey)属性名称相同的属性项)
    * @param {Json} data 需要预处理的元数据
-   * @param {Function} _convertAttrs 转换属性函数，默认根据设置添加minZoom、maxZoom属性后原样返回
+   * @param {Function} _convertAttrs 转换属性函数，默认根据设置添加minZoom、maxZoom、x、y属性后原样返回 <br />
+   * target convertAttrs函数 形参，转换后的数据对象 <br />
+   * source convertAttrs函数 形参，转换前的元数据对象 <br />
+   * <span style="color:red;">target对象属性</span> <br />
+   * { <br />
+   *    id: '',   //必要 <br />
+   *    name: '', //必要 <br />
+   *    pid: '',  //必要 <br />
+   *    x: x,     //必要 <br />
+   *    y: y,     //必要 <br />
+   *    isMyAttention: false, //非必要 <br />
+   *    level: 0, //非必要 <br />
+   *    minZoom: 6, //必要 <br />
+   *    maxZoom: 16,//必要 <br />
+   *    attrs: {  //自定义属性，非必要 <br />
+   *    } <br />
+   * } <br />
    */
   utils.map.RData.prototype.dataListToTable = function (data, _convertAttrs) {
     if (utils.map.tools.isArray(data)) {

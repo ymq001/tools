@@ -6,7 +6,7 @@
    * @class
    * @alias utils.map.RMarker
    * @classdesc utils.map.RMarker
-   * @description 自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/rmarker.html|RMarker示例}
+   * @description 自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/rmarker.html|<span style="color: red;">RMarker示例</span>}
    * 
    * @constructor
    * 
@@ -22,7 +22,6 @@
    * @param {Json|String|HTMLElement} opts.content 自定义marker内容，可以是Json对象( eg: {url: {String}, size: {BMap.Size}} )，可以是字符串，也可以是dom节点
    * @param {String} opts.content.url marker背景图标链接
    * @param {BMap.Size} opts.content.size marker背景图标大小
-   * @param {Number} opts.zIndex 可选 设置Marker的dom层级 默认以添加顺序设置层级
    * @param {BMap.Size} opts.anchor Marker的的位置偏移值
    * @param {Boolean} opts.enableDragging 是否启用拖拽，默认为false
    * @param {Boolean} opts.isShowText 是否显示marker名称，默认为true
@@ -123,7 +122,9 @@
 
     opts = opts || {};
     opts.text = opts.text || opts.name;
-    this._isEnableFragment = opts.isEnableFragment || false;
+    this._isEnableFragment = utils.map.tools.isBoolean(opts.isEnableFragment) ? opts.isEnableFragment : this._isEnableFragment;
+    this.isDrew = false;
+
     /**
      * _opts是默认参数赋值。
      * 下面通过用户输入的opts，对默认参数赋值
@@ -250,18 +251,17 @@
    * @return {Dom} 返回自定义生成的dom节点
    */
   utils.map.RMarker.prototype._initialize = function (map, container) {
-    var _this = this,
-      div = _this._container = document.createElement("div"),
-      anchor = this._opts.anchor,
-      pixel = map.pointToOverlayPixel(this._position);
+    var _this = this;
+    var div = _this._container = document.createElement("div");
+      //var anchor = this._opts.anchor;
+      //var pixel = map.pointToOverlayPixel(this._position);
     _this._map = map;
-    _this._map._index = _this._opts.zIndex || _this._map._index || 0;
     utils.map.tools.extend(div.style, {
       position: "absolute",
-      zIndex: BMap.Overlay.getZIndex(this._position.lng),//BMap.Overlay.getZIndex(++_this._map._index),
+      zIndex: BMap.Overlay.getZIndex(this._position.lng),
       cursor: "pointer",
-      left: pixel.x + anchor.width + "px",
-      top: pixel.y + anchor.height + "px"
+      // left: pixel.x + anchor.width + "px",
+      // top: pixel.y + anchor.height + "px"
     });
     if (utils.map.tools.isNumber(_this._index)) {
       div.setAttribute('BMarkerIndex', _this._index);
@@ -273,9 +273,9 @@
     // 给主容器添加上用户自定义的内容
     _this._appendContent();
     // 给主容器添加事件处理
-    _this._setEventDispath();
+    !this._isEnableFragment && _this._setEventDispath();
     // 获取主容器的高宽
-    _this._getContainerSize();
+    !this._isEnableFragment && _this._getContainerSize();
 
     //兼容右键菜单设置项
     _this.Ua = div;
@@ -294,7 +294,10 @@
    */
   utils.map.RMarker.prototype.draw = function () {
     this._draw();
-    _dispatchEvent(this, 'onload');
+    if (this.isDrew == false) {
+      this.isDrew = true;
+      _dispatchEvent(this, 'onload');
+    }
   }
   /**
    * 为自定义的Marker设定显示位置，实现自定义覆盖物的draw方法
@@ -650,29 +653,16 @@
   utils.map.RMarker.prototype._setEventDispath = function () {
     var me = this,
       div = me._container,
+      _containerOffset = {
+        left: this._map.getContainer().offsetLeft,
+        top: this._map.getContainer().offsetTop
+      },
       _offset = { //鼠标位置距离覆盖物左上角的x、y轴偏差值
         left: 0,
         top: 0
       },
       isMouseDown = false,  // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计算
       startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参数
-
-    //获取边距
-    function offset(target) {
-      var top = 0,
-        left = 0
-
-      while (target.offsetParent) {
-        top += target.offsetTop
-        left += target.offsetLeft
-        target = target.offsetParent
-      }
-
-      return {
-        top: top,
-        left: left,
-      }
-    }
 
     // 通过e参数获取当前鼠标所在位置
     function _getPositionByEvent(e) {
@@ -681,6 +671,8 @@
       var y = e.pageY || e.clientY || 0;
 
       var pixel = new BMap.Pixel(x, y);
+      pixel.x -= _containerOffset.left;
+      pixel.y -= _containerOffset.top;
       var point = me._map.pixelToPoint(pixel);
       return {
         "pixel": pixel,
@@ -1082,30 +1074,43 @@
    *    rcuId: 123
    *  }
    * });
-   * map.addOverlay(myRMarkerObject);
+   * map.addOverlay(myRMarkerObject);  //这里执行过后，就已经添加到dom元素中了
    * 
    * var removeMarker = function(){
    *  //do something...
    * }
    * var markerMenu = new BMap.ContextMenu();
-   * markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(marker)));
+   * markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(myRMarkerObject)));
    * myRMarkerObject.addContextMenu(markerMenu);
    */
   utils.map.RMarker.prototype.addContextMenu = function (control) {
-    control && utils.map.tools.isFunction(control.qa) && (control.qa(this), _dispatchEvent(control, 'onaddcontextmenu'));
-    utils.map.tools.on(this, "onrightclick", function (e) {
-      if (!!this._map.lastOverlayMenu && this._map.lastOverlayMenu != control) {
-        this._map.lastOverlayMenu.B.style.visibility = 'hidden';
-      }
-      control.show();
-      var _pixel = this._map.pointToPixel(e.target._position);
-      var _size = e.target._size;
-      var l = e.pixel.x - _pixel.x;
-      var t = e.pixel.y - _pixel.y - _size.height;
-      control.B.style.top = t + 'px';
-      control.B.style.left = l + 'px';
-      this._map.lastOverlayMenu = control;
-    });
+    if (this.isDrew == true) {
+      loadMenu.call(this);
+    } else {
+      this.on('load', function () {
+        loadMenu.call(this);
+      });
+    }
+    function loadMenu() {
+      control && utils.map.tools.isFunction(control.qa) && (control.qa(this), _dispatchEvent(control, 'onaddcontextmenu'));
+      this.on("onrightclick", function (e) {
+        if (!!this._map.lastOverlayMenu && this._map.lastOverlayMenu != control) {
+          this._map.lastOverlayMenu.B.style.visibility = 'hidden';
+        }
+        control.show();
+        var anchor = this.getAnchor();
+        var _pixel = this._map.pointToPixel(e.target._position);
+        var _size = e.target._size;
+        var l = e.pixel.x - _pixel.x - anchor.width;
+        var t = e.pixel.y - _pixel.y - _size.height - anchor.height + this._size.height;
+        control.B.style.top = t + 'px';
+        control.B.style.left = l + 'px';
+        this._map.lastOverlayMenu = control;
+
+        _stopAndPrevent(e);
+        return;
+      }, '__onrightclick__menu__control');
+    }
   }
   /**
    * 移除右键菜单
@@ -1122,7 +1127,8 @@
    * myRMarkerObject.addContextMenu(markerMenu);
    */
   utils.map.RMarker.prototype.removeContextMenu = function (control) {
-    control && utils.map.tools.isFunction(control.remove) && (_dispatchEvent(control, 'onremovecontextmenu'), control.remove())
+    control && utils.map.tools.isFunction(control.remove) && (_dispatchEvent(control, 'onremovecontextmenu'), control.remove());
+    this.off('rightclick', '__onrightclick__menu__control');
   }
 
   /**
@@ -1220,7 +1226,10 @@
    * @class
    * @alias utils.map.RMarkerCollection
    * @classdesc utils.map.RMarkerCollection
-   * @description 批量创建自定义复杂覆盖物类，实现丰富的Marker展现效果。 {@link http://172.26.1.40/docs/examples/batchMarker.html|RMarkerCollection示例(1000点示例)} {@link http://172.26.1.40/docs/examples/batchMarker.1.html|RMarkerCollection示例(700点示例)} <br />
+   * @description 批量创建自定义复杂覆盖物类，实现丰富的Marker展现效果。 
+   * {@link http://172.26.1.40/docs/examples/batchMarker.2.html|<span style="color: red;">RMarkerCollection示例(1300点示例)</span>}
+   * {@link http://172.26.1.40/docs/examples/batchMarker.html|<span style="color: red;">RMarkerCollection示例(1000点示例)</span>}
+   * {@link http://172.26.1.40/docs/examples/batchMarker.1.html|<span style="color: red;">RMarkerCollection示例(700点示例)</span>} <br />
    * <span style="color:red;"><b>注意：</b> 暂时只支持RMarker类型的覆盖物</span>
    * 
    * @extends RMarker
@@ -1236,12 +1245,11 @@
    * @param {Json|String|HTMLElement} opts.content 自定义marker内容，可以是Json对象( eg: {url: {String}, size: {BMap.Size}} )，可以是字符串，也可以是dom节点
    * @param {String} opts.content.url marker背景图标链接
    * @param {BMap.Size} opts.content.size marker背景图标大小
-   * @param {Number} opts.zIndex 可选 设置Marker的dom层级 默认以添加顺序设置层级
    * @param {BMap.Size} opts.anchor Marker的的位置偏移值
    * @param {Boolean} opts.enableDragging 是否启用拖拽，默认为false
    * @param {Boolean} opts.isShowText 是否显示marker名称，默认为true
    * @param {Boolean} opts.isShowCount 是否显示marker角标，默认为false
-   * @param {Number|String} content.count marker角标，可以是数字，也可以是文本
+   * @param {Number|String} opts.count marker角标，可以是数字，也可以是文本
    * @param {String} opts.text marker名称
    * @param {Json} opts.countTheme 角标主题色
    * @param {String} opts.countTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
@@ -1250,7 +1258,7 @@
    * @param {String} opts.textTheme.bgColor 浏览器可以识别的颜色值，默认半透明黑色
    * @param {String} opts.textTheme.color 浏览器可以识别的颜色值，默认白色
    * @param {Json} opts.attrs 存放自定义属性
-   * @param {Boolean} isEnableFragment 是否开启Fragment优化措施 默认开启
+   * @param {Boolean} isEnableFragment 可选 是否开启Fragment优化措施 默认开启
    */
   utils.map.RMarkerCollection = function (map, opts, isEnableFragment) {
     /**
@@ -1293,7 +1301,7 @@
 
       this._map.getPanes().labelPane.appendChild(docFragment);
       this._map.isEnableFragment = true;
-    } else{
+    } else {
       for (var i = 0, _opt; _opt = opts[i]; i++) {
         this._overlays.push(new utils.map.RMarker(_opt, i));
       }
@@ -1342,38 +1350,51 @@
 
   /**
    * 批量添加右键菜单 参考百度地图 Marker 的api addContextMenu
-   * @param {BMap.ContextMenu} control 右键菜单实例
+   * @param {Function} getControlInstance 返回BMap.ContextMenu类型的右键菜单实例的函数 <br /> 
+   * <span style="color: red;">注意： 此形参必须是返回BMap.ContextMenu类型的实例对象</span>
    * @example 参考示例
    * 
    * var removeMarker = function(){
    *  //do something...
    * }
-   * var markerMenu = new BMap.ContextMenu();
-   * markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(marker)));
-   * myRMarkerObject.addContextMenu(markerMenu);
+   * function getControlInstance(){
+   *  var markerMenu = new BMap.ContextMenu();
+   *  markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(marker)));
+   *  return markerMenu;
+   * }
+   * myRMarkerObject.addContextMenu(getControlInstance);
    */
-  utils.map.RMarkerCollection.prototype.addContextMenu = function (control) {
+  utils.map.RMarkerCollection.prototype.addContextMenu = function (getControlInstance) {
+    if(!(getControlInstance() instanceof BMap.ContextMenu)){
+      throw "请检查形参：BMap.ContextMenu类型的右键菜单实例的函数";
+    }
     this._overlays.forEach(function (_overlay) {
+      var control = getControlInstance();
       _overlay.addContextMenu(control);
+      _overlay.rightClickControl = control;
     });
   }
   /**
-   * 批量移除右键菜单
-   * @param {BMap.ContextMenu} control 右键菜单实例
-   * @example 参考示例
+   * 批量移除绑定在覆盖物上的右键菜单 <br />
+   * <span style="color: red;">注意： 此API会删除所有覆盖物右键菜单</span>
    * 
+   * @example 参考示例
    * var removeMarker = function(){
    *  //do something...
-   *  myRMarkerObject.removeContextMenu(markerMenu); //移除右键菜单
+   *  myRMarkerObject.removeContextMenu(); //移除右键菜单
    *  alert('移除成功');
    * }
-   * var markerMenu = new BMap.ContextMenu();
-   * markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(marker)));
-   * myRMarkerObject.addContextMenu(markerMenu);
+   * function getControlInstance(){
+   *  var markerMenu = new BMap.ContextMenu();
+   *  markerMenu.addItem(new BMap.MenuItem('删除',removeMarker.bind(marker)));
+   *  return markerMenu;
+   * }
+   * myRMarkerObject.addContextMenu(getControlInstance);
    */
-  utils.map.RMarkerCollection.prototype.removeContextMenu = function (control) {
+  utils.map.RMarkerCollection.prototype.removeContextMenu = function () {
     this._overlays.forEach(function (_overlay) {
-      _overlay.removeContextMenu(control);
+      _overlay.rightClickControl instanceof BMap.ContextMenu && _overlay.removeContextMenu(_overlay.rightClickControl);
+      _overlay.rightClickControl = null;
     });
   }
   /*** utils.map.RMarkerCollection 代码结束 ***/

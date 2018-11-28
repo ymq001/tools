@@ -115,10 +115,14 @@ export let tools = {
     return false;
   },
   /**
-   * 判断指定对象是否存在指定的属性
+   * 判断指定对象是否存在指定的属性 <br />
+   * <span style="color: red;">注意： 此函数 基于原生javascript API Object.prototype.hasOwnProperty</span>
    * @param {Object} obj 需要被检测的对象
    * @param {String} key 需要被检测的属性
    * @returns {Boolean}
+   * @example
+   *  var _own = { key: 2 };
+   *  utils.hasOwn(_own, 'key') //true
    */
   hasOwn: function (obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
@@ -127,12 +131,15 @@ export let tools = {
    * 数组去重
    * @param {Array} array 需要被去重的数组
    * @returns {Array}
+   * @example
+   *  var arr = [1,2,4,3,5,4,3,2];
+   *  utils.unique(arr) //[1, 5, 4, 3, 2]
    */
   unique: function (array) {
     let hash = [];
-    for (let i = 0; i < array.length; i++) {
-      for (let j = i + 1; j < array.length; j++) {
-        if (array[i] === array[j])++i;
+    for (let i = 0, len = array.length; i < len; i++) {
+      for (let j = i + 1; j < len; j++) {
+        if (array[i] === array[j]) j = ++i;
       }
       hash.push(array[i]);
     }
@@ -145,6 +152,17 @@ export let tools = {
    * @param {Object} target 目标对象，其他对象的成员属性将被附加到该对象上
    * @param  {...Object} obj 可选 需要被合并的对象
    * @returns {Object}
+   * @example 示例一
+   *  var mm = {key:1,K:2};
+   *  var nn = {key:2,j:3};
+   *  utils.extend(false, mm, nn); // {key: 2, K: 2, j: 3}
+   *  console.log(mm) // {key: 1, K: 2}
+   * 
+   * @example 示例二
+   *  var mm = {key:1,K:2};
+   *  var nn = {key:2,j:3};
+   *  utils.extend(mm, nn); // {key: 2, K: 2, j: 3}
+   *  console.log(mm) // {key: 2, K: 2, j: 3}
    */
   extend: function () {
     let options;
@@ -178,7 +196,7 @@ export let tools = {
           if (src === copy) {
             continue;
           }
-          if (deep && copy && (this.isPlainObject(copy) || (copyIsArray = this.isArray(copy)))) {
+          if (!deep && !!copy && (this.isPlainObject(copy) || (copyIsArray = this.isArray(copy)))) {
             if (copyIsArray) {
               copyIsArray = false;
               clone = src && this.isArray(src) ? src : [];
@@ -195,22 +213,39 @@ export let tools = {
     return target;
   },
   /**
-   * 冻结对象
+   * 冻结对象 <br />
+   * 冻结指的是不能向这个对象添加新的属性，不能修改其已有属性的值，不能删除已有属性，以及不能修改该对象已有属性的可枚举性、可配置性、可写性 <br />
+   * <span>注意： 此函数基于Object.freeze</span>
    * @param {Object} obj 需要被冻结的对象
+   * @example
+   * const object1 = {
+   *    property1: 42
+   * };
+   * const object2 = utils.freeze(object1);
+   * object2.property1 = 33; // 此时并不会真正给属性 property1 赋值成功
+   * console.log(object2.property1); // 42
    */
   freeze: function (obj) {
     const _this = this;
-    Object.freeze(obj);
-    Object.keys(obj).forEach((key, value) => {
-      if (_this.isObject(obj[key])) {
-        this.freeze(obj[key]);
+    const _obj = this.copy(obj);
+    Object.freeze(_obj);
+    Object.keys(_obj).forEach((key) => {
+      if (_this.isObject(_obj[key])) {
+        this.freeze(_obj[key]);
       }
     })
+    return _obj;
   },
   /**
    * 复制对象(数组或属性)
    * @param {Object|Array} data 需要被复制的对象
    * @returns {Object}
+   * @example
+   *  var mm = {key:1,K:2};
+   *  var kk = utils.copy(mm);
+   *  kk.key = 3;
+   *  console.log(kk.key) // 3
+   *  console.log(mm.key) // 1
    */
   copy: function (data) {
     let _copy = null;
@@ -230,144 +265,6 @@ export let tools = {
     return _copy;
   },
   /**
-   * 获取对象对应键的值
-   * @param {Object} obj 元对象
-   * @param {Array|String} keypath 元对象的键(的数组)
-   * @returns {Null|any}
-   */
-  getKeyValue: function (obj, keypath) {
-    if (!this.isObject(obj)) {
-      return null;
-    }
-    let array = null;
-    if (this.isArray(keypath)) {
-      array = keypath;
-    } else if (this.isString(keypath)) {
-      array = keypath.split('.');
-    }
-    if (array == null || array.length == 0) {
-      return null;
-    }
-    let value = null;
-    let key = array.shift();
-    const keyTest = key.match(new RegExp("^(\\w+)\\[(\\d+)\\]$"));
-    if (keyTest) {
-      key = keyTest[1];
-      let index = keyTest[2];
-      value = obj[key];
-      if (this.isArray(value) && value.length > index) {
-        value = value[index];
-      }
-    } else {
-      value = obj[key];
-    }
-
-    if (array.length > 0) {
-      return this.getKeyValue(value, array);
-    }
-    return value;
-  },
-  /**
-   * 设定键值
-   * @param {Object} obj 需设定键值的对象
-   * @param {Array|String} keypath 需要设定的键(的数组)
-   * @param {any} value 需要设置的值
-   * @param {Object} orignal 元对象
-   * @returns {Boolean|Object}
-   */
-  setKeyValue: function (obj, keypath, value, orignal) {
-    if (!this.isObject(obj)) {
-      return false;
-    }
-    let array = null;
-    if (this.isArray(keypath)) {
-      array = keypath;
-    } else if (this.isString(keypath)) {
-      array = keypath.split('.');
-      origin = obj;
-    }
-    if (array == null || array.length == 0) {
-      return false;
-    }
-    let children = null;
-    let index = 0;
-    let key = array.shift();
-    const keyTest = key.match(new RegExp("^(\\w+)\\[(\\d+)\\]$"));
-    if (keyTest) {
-      key = keyTest[1];
-      index = keyTest[2];
-      children = obj[key];
-      if (this.isArray(children) && children.length > index) {
-        if (array.length > 0) {
-          return this.setKeyValue(children[key], array, value, orignal);
-        }
-        children[index] = value;
-      }
-    } else {
-      if (array.length > 0) {
-        return this.setKeyValue(obj[key], array, value, orignal);
-      }
-      obj[key] = value;
-    }
-    return orignal;
-  },
-  /**
-   * 对象转换为数组
-   * @param {Object} obj 需要被转换为数组的对象
-   * @param {String} keyName 可选
-   * @param {String} arg3 可选 
-   * @returns {Array}
-   */
-  toArray: function (obj, keyName, arg3) {
-    let titleName = '';
-    if (!this.isObject(obj)) {
-      return [];
-    }
-    if (this.isString(arg3)) {
-      titleName = arg3;
-    }
-    let listObj = [];
-    for (let o in obj) {
-      let value = obj[o];
-      let n = {};
-      if (this.isObject(value)) {
-        n = value;
-      } else {
-        n[titleName] = value;
-      }
-      if (keyName) {
-        n[keyName] = o;
-      }
-      listObj.push(n);
-    }
-    return listObj;
-  },
-  /**
-   * 数组转换为对象
-   * @param {Array} list 需要转换为对象的数组
-   * @param {String} idName 可选 键 默认 'id'
-   * @param {Boolean} hasNum 可选 是否计算count属性 默认 'false'
-   * @returns {Object}
-   */
-  toObject: function (list, idName = 'id', hasNum = false) {
-    let listObj = {};
-    for (let i = 0, n; n = list[i]; i++) {
-      if (this.isObject(n)) {
-        if (idName == 'count') {
-          listObj[i] = n;
-        } else {
-          listObj[n[idName]] = n;
-          if (hasNum) {
-            listObj[n[idName]].count = i;
-          }
-        }
-      } else {
-        listObj[n] = n;
-      }
-    }
-    return listObj;
-  },
-  /**
    * 获取uuid
    */
   uuid: function () {
@@ -376,16 +273,16 @@ export let tools = {
     };
     return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
   },
-  // /**
-  //  * 
-  //  * @param {Object} opts 
-  //  * @param {} opts.value
-  //  * @param {} opts.dict
-  //  * @param {} opts.connector
-  //  * @param {} opts.keyField
-  //  * @param {} opts.titleField
-  //  * @returns {String}
-  //  */
+  /**
+   * @private
+   * @param {Object} opts 
+   * @param {} opts.value
+   * @param {} opts.dict
+   * @param {} opts.connector
+   * @param {} opts.keyField
+   * @param {} opts.titleField
+   * @returns {String}
+   */
   dictMapping: function (opts) {
     if (!dict || this.isNull(value)) return '';
     if (connector) {

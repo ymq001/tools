@@ -28,8 +28,7 @@ export let cookies = {
         try {
           return JSON.parse(data);
         } catch (e) {
-          console.error(`取数据转换json错误：${e}`);
-          return '';
+          throw `取数据转换json错误：${e}`;
         }
       } else {
         return data;

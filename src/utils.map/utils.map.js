@@ -8,10 +8,11 @@
   utils.map = utils.map || {};
 
   /**
-   * 初始化地图配置
-   * 地图常规设置(中心点坐标、最大最小缩放层级)
-   * 常规设置(拖拽平移、滚轮缩放、双击放大)
-   * 常规控件(缩略图、比例尺、拖拽选取)
+   * 初始化地图配置 <br /> 
+   * 地图常规设置(中心点坐标、最大最小缩放层级) <br /> 
+   * 常规设置(拖拽平移、滚轮缩放、双击放大) <br /> 
+   * 常规控件(缩略图、比例尺、拖拽选取) <br /> 
+   * <span style="color: red;">注意： 若使用自动获取默认地图配置信息，则须引入jquery</sapn>
    * 
    * @property {BMap.Map} attrs 用于存放各个实例的属性
    * @property {BMap.Map} attrs._map 百度地图实例
@@ -23,6 +24,8 @@
    * <span style="color: red;"> 生产环境下alert 弹出异常信息</sapn>
    * 
    * @param {Json} opts
+   * @param {Boolean} opts.isAutoGetConfig 可选 是否自动获取地图配置信息，默认 true 自动获取 <br /><span style="color: red;">注意： 若使用自动获取默认地图配置信息，则须引入jquery</sapn> 
+   * @param {Boolean} opts.isAsync 可选 是否异步获取地图配置信息，默认 false 同步获取 <br /><span style="color: red;">这里援引 jquery ajax 中的 async 属性</sapn> 
    * @param {String} opts.mapId 必要参数 地图容器Id
    * @param {BMap.Point|Json} opts.mapCenter 必要参数 地图中心点 可以是BMap.Point类型数据，也可以是具有属性x、y的json对象(eg: {x: 116, y:32})
    * @param {Number} opts.mapCenter.x 必要参数 地图中心点经度(lat/x)
@@ -54,29 +57,35 @@
         _isProd: true,
         _opts: {}
       }
-      if (!utils.map.tools.isString(opts.mapId)) {
+      if(!utils.map.tools.isBoolean(opts.isAutoGetConfig)){
+        opts.isAutoGetConfig = true;
+      }
+      if(!utils.map.tools.isBoolean(opts.isAsync)){
+        opts.isAsync = false;
+      }
+
+      if (!opts.isAutoGetConfig && !utils.map.tools.isString(opts.mapId)) {
         _alert('请检查参数[mapId] 是否正确', '请正确配置地图容器标识');
         return;
       }
-      if (opts.mapCenter instanceof BMap.Point) {
+      if (!opts.isAutoGetConfig && opts.mapCenter instanceof BMap.Point) {
         opts.mapCenter = {
           x: opts.mapCenter.lng / 1,
           y: opts.mapCenter.lat / 1
         };
       }
-      if (!opts.mapCenter || !utils.map.tools.isNumber(opts.mapCenter.x / 1) || !utils.map.tools.isNumber(opts.mapCenter.y / 1)) {
+      if (!opts.isAutoGetConfig && (!opts.mapCenter || !utils.map.tools.isNumber(opts.mapCenter.x / 1) || !utils.map.tools.isNumber(opts.mapCenter.y / 1))) {
         _alert('请检查参数[mapCenter] 是否正确', '请正确配置地图中心点');
         return;
       }
-      if (!utils.map.tools.isNumber(opts.mapMaxZoom)) {
+      if (!opts.isAutoGetConfig && !utils.map.tools.isNumber(opts.mapMaxZoom)) {
         _alert('请检查参数[mapMaxZoom] 是否正确', '请正确配置最大缩放级别');
         return;
       }
-      if (!utils.map.tools.isNumber(opts.mapMinZoom)) {
+      if (!opts.isAutoGetConfig && !utils.map.tools.isNumber(opts.mapMinZoom)) {
         _alert('请检查参数[mapMinZoom] 是否正确', '请正确配置最小缩放级别');
         return;
       }
-
       var _filter = function () { return true; };
       this.attrs._opts = utils.map.tools.extend({
         mapId: undefined,
@@ -99,6 +108,10 @@
       this.attrs._isProd = this.attrs._opts.isProd;
       this.attrs._opts.filter = utils.map.tools.isFunction(this.attrs._opts.filter) ? this.attrs._opts.filter : _filter;
 
+      if(opts.isAutoGetConfig){
+        this._getDefaultConfig(opts.isAsync);
+        utils.map.tools.extend(this.attrs._opts, opts);
+      }
       this._initializeMap();
       for (var key in this.attrs) {
         this.attrs[key.indexOf('_') == 0 ? key.slice(1) : key] = this.attrs[key];
@@ -129,7 +142,11 @@
       _map.addControl(new BMap.OverviewMapControl({ isOpen: true, size: new BMap.Size(250, 250), anchor: BMAP_ANCHOR_BOTTOM_RIGHT }));
     }
 
-    this.attrs._rdata = new utils.map.RData({});
+    _map.disableContinuousZoom(); //禁用连续缩放效果
+
+    this.attrs._rdata = new utils.map.RData({
+      dataLevelZoom: _opts.zoomLevelJson
+    });
     this.attrs._rmanager = new utils.map.RManager(_map, {
       padding: _opts.padding,
       minZoom: _opts.mapMinZoom,
@@ -137,7 +154,42 @@
       filter: _opts.filter
     })
   }
-  
+  /**
+   * 获取地图基本配置
+   * @private
+   * @param {Boolean} isAsync 是否异步请求，默认为同步
+   */
+  utils.map._getDefaultConfig = function(isAsync) {
+    var _this = this;
+    $.ajax({
+      url: '/api/Gis/GetGisDefaultConfig',
+      async: utils.map.tools.isBoolean(isAsync) ? isAsync : true,
+      success: function (json) {
+        if (json.success) {
+          //console.log(json);
+          var data = json.data;
+          //设置defaults
+          _this.attrs._opts = $.extend({}, _this.attrs._opts, {
+            mapCenter: {
+              x: data.gis_center.d_longitude,
+              y: data.gis_center.d_latitude
+            },
+            mapZoom: data.gis_center.i_mapLevel,
+            mapMinZoom: data.minLevel,
+            mapMaxZoom: data.maxLevel,
+            cityId: data.gis_center.id,
+            cityName: data.gis_center.vc_Name,
+            zoomLevel: data.gis_configProperty,
+            zoomLevelJson: data.mapZoomLevel
+          });
+        } else {
+          //$.messager.alert('提示', json.msg);
+          _alert(json.msg);
+        }
+      }
+    });
+  }
+
   /**
    * 弹出错误提示
    * @private
